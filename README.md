@@ -121,7 +121,7 @@ Create a Service account in the installer project and assign the below mentioned
 
 In the GCP Console, navigate to **IAM & Admin >  Click on "Add"**. Under “New members” give the Installer project service account and select “Security Admin” as role and click on “Save”.
 
-Download the key in JSON format and copy them to the ````<Path-To-Patrol-installer>/biarca-patrol-terraform ```` directory in the installer machine. 
+Download the key in JSON format and copy them to the ````<Path-To-Patrol-installer>/patrol-k8s-marketplace```` directory in the installer machine. 
 ### 3.3 Creating External Static Address and DNS Record
 For accessing Biarca Patrol UI using an FQDN, perform the below steps in GCP.
 #### 3.3.1 Create External Static IP
@@ -132,6 +132,7 @@ Make sure to provide values as mentioned below and click on the Reserve button.
 | **Network Service Tier** | `Premium` |
 | **IP Version** | `IPv4` |
 | **Type** | `Global` |
+
 **Note:** Make a note of the External Static IP address.
 #### 3.3.2 Create a DNS Record for Reserved External Static IP
 Create a public domain name (or subdomain) and update its  **'A'** record with reserved static IP. Follow your DNS provider instructions to know more about managing DNS records.
@@ -154,11 +155,11 @@ Below is the list of parameters in **installer_envs** file, which needs to be up
 - **GSUITE_SUPER_ADMIN_EMAIL**=<#Email ID of GSUITE SUPER ADMIN>
 - **SLACK_WEBHOOK_URL**=<#Slack webhook URL to notify forseti violations and event changes in monitoring resources>
 - **SCHEDULER_REGION**=<#Region in which cloud scheduler will be created for scheduling forseti scans>
-- **PATROL_STATS_TIME**=<#Time frame in minutes to update biarca Patrol stats info. PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15. Example:- 15>
+- **PATROL_STATS_TIME**=<#Time frame in minutes to update Biarca Patrol stats info. PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15. Example:- 15>
 
 **Note:** If Installer Project & Monitoring project are same, provide the same values for  ***PATROL_PROJECTID*** & ***MONITOR_PROJECTID***.
 ### 3.5 Creating Patrol Specific GCP Resources
-Navigate to the path `<Path to Patrol-installer>/ biarca-patrol-terraform/terraform` and execute the below command to install the required GCP resources in the installer project.
+Navigate to the path `<Path to Patrol-installer>/patrol-k8s-marketplace/terraform` and execute the below command to install the required GCP resources in the installer project.
 ````
 $ bash installer.sh
 ````
@@ -196,7 +197,7 @@ In the GCP Console, navigate to Security > Identity-Aware Proxy and Follow the b
 ### 4.2 Update Service Accounts
 Post successful installation of Biarca Patrol, in the installer project execute the below to remove the Owner role attached to the service accounts.
 ````
-$ cd <Path to patrol-installer>/ biarca-patrol-terraform/
+$ cd <Path to patrol-installer>/patrol-k8s-marketplace/
 $ bash remove_serviceaccount_roles.sh
 ````
 
@@ -219,7 +220,7 @@ Execute the below Steps:
    - Select the sink to be deleted and click on *Delete* on the top.
 5. Execute the below commands.
 ````
-$ cd <Path to Patrol-installer>/ biarca-patrol-terraform/terraform
+$ cd <Path to Patrol-installer>/patrol-k8s-marketplace/terraform
 $ bash uninstall.sh 
 ````
 `Note :- The above script would not delete IAP secrets, External Static IP and DNS record. These need to be removed manually.`
