@@ -1,0 +1,61 @@
+### Installer related envs
+
+# All the resources created as part of installation setup will have this suffix
+RANDOM_ID=<4-digit-alphanumeric-string> # ex: 1a1b
+
+# File path of the key file which has owner role for Installer project
+# and IAM Security Admin role for monitoring project
+PATROL_KEYFILE=<PATROL_KEYFILE>
+
+# Installer Project ID 
+PATROL_PROJECTID=<PATROL_PROJECTID>
+
+# Monitor Resource ID
+MONITOR_PROJECTID=<MONITOR_PROJECTID>
+
+# Region name on which the assets(Compute and CloudSQL) will be created
+REGION=<REGION>
+
+# Zone name on which the assets will be created
+ZONE=<ZONE>
+
+# Network name on which the assets will be created
+NETWORK_NAME=<NETWORK_NAME>
+
+# Domain name reserved to access Biarca patrol dashboard
+PATROL_DOMAIN_NAME=<PATROL_DOMAIN_NAME>
+
+# Reserved static IP name and address for load balancer to access Biarca patrol dashboard
+LOADBALACER_IP_NAME=<STATIC_IP_NAME>
+LOADBALACER_IP=<STATIC_IP_ADDRESS>
+
+
+### Forseti related envs
+
+# GCP organization domain name
+GCP_ORGANIZATION=<GCP_ORGANIZATION> # "No organization" also acceptable
+
+# Send grid API key used to send forseti notifications
+SENDGRID_APIKEY=<SENDGRID_APIKEY>
+
+# Email ID of Forseti notification Email sender
+FORSETI_EMAIL_SENDER=<FORSETI_EMAIL_SENDER> # ex:forseti-alert@example.com
+
+# Email ID of Forseti notification Email recipient
+FORSTI_EMAIL_RECIPIENT=<FORSTI_EMAIL_RECIPIENT>
+
+# Email ID of GSUITE SUPER ADMIN
+GSUITE_SUPER_ADMIN_EMAIL=<GSUITE_SUPER_ADMIN_EMAIL>
+
+# Slack webhook URL to notify forseti violations and event changes in monitoring resources
+SLACK_WEBHOOK_URL=<SLACK_WEBHOOK_URL> # Ref: https://api.slack.com/incoming-webhooks
+
+
+### Application related envs
+
+# Region on which cloud scheduler will be created for scheduling forseti scans
+SCHEDULER_REGION=<SCHEDULER_REGION>
+
+# Time frame to update biarca patrol stats info in minutes
+PATROL_STATS_TIME=<PATROL_STATS_TIME> # Should be greater than or equal to 15 ex:15
+
