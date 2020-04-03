@@ -18,7 +18,7 @@ datasources:
   # <int> org id. will default to orgId 1 if not specified
   orgId: 1
   # <string> url
-  url: 127.0.0.1:3306  #34.66.11.171:3306
+  url: 127.0.0.1:3306  #<IPAddress>:<PortNumber>
   # <string> Deprecated, use secureJsonData.password
   password:
   # <string> database user, if used
