@@ -137,6 +137,10 @@ Make sure to provide values as mentioned below and click on the Reserve button.
 #### 3.3.2 Create a DNS Record for Reserved External Static IP
 Create a public domain name (or subdomain) and update its  **'A'** record with reserved static IP. Follow your DNS provider instructions to know more about managing DNS records.
 ### 3.4 Updating Configuration File
+Navigate to the terraform folder.
+````
+$ cd <Path to Patrol-installer>/patrol-k8s-marketplace/terraform
+````
 Below is the list of parameters in **installer_envs** file, which needs to be updated with user specific info, before continuing with the installation.
 - **RANDOM_ID**=<#4 character alphanumeric value. All the resources created as part of installation setup will have this suffix. Example:- 1a1b >
 - **PATROL_KEYFILE**=<#Full path of the service account key file created in installer project>
@@ -163,18 +167,6 @@ Navigate to the path `<Path to Patrol-installer>/patrol-k8s-marketplace/terrafor
 ````
 $ bash installer.sh
 ````
-Executing this script would create the below resources in installer project as part of script execution
-- Service Accounts - 5
-- Firewall Rules
-- Buckets - 2
-- Pubsub topics - 3
-- Subscription - 3
-- One Kubernetes Cluster with 3 nodes
-- One Cloud SQL Instance
-- Databases - 2 
-- DB Credentials
-- Two Storage Buckets
-
 `Note: Post successful completion of the script, few values will be displayed at the end of the script. Those values MUST be provided in the Marketplace UI during the Patrol app installation`
 ### 3.6 Patrol Installation from GCP Marketplace
 In the GCP Console, select Installer project and then from the navigation menu click on  Marketplace and search for "Patrol". 
@@ -187,9 +179,9 @@ In the GCP Console, navigate to Security > Identity-Aware Proxy and Follow the b
 
 `Note: If this is the first time, then you might have to click on Configure Consent Screen and provide an application name`
 
-- Click on **HTTPS RESOURCES** tab and Enable the toggle button beside the entry **patrol-ui-<random id>** to enable IAP for UI service. A pop up window is displayed.
+- Click on **HTTPS RESOURCES** tab and Enable the toggle button beside the entry **patrol-ui-<RANDOM_ID>** to enable IAP for UI service. A pop up window is displayed.
 - Select the Checkbox  and click on**Turn ON**
-- Select the checkbox of the**patrol-ui-<random id>** (created as part of the above step). A panel is displayed on the right side.
+- Select the checkbox of the**patrol-ui-<RANDOM_ID>** (created as part of the above step). A panel is displayed on the right side.
 - Click on the **ADD MEMBER** button.
 - In the New members box, provide an **email id** and from the Roles drop down, select **Cloud IAP -> IAP-Secured Web App User**.
 
