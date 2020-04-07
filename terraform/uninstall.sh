@@ -55,7 +55,7 @@ if gcloud container clusters list  --zone="${PATROL_ZONE}" | awk 'NR>=2' | awk '
 
  if ! kubectl delete svc $(kubectl get svc | grep 'patrol-webserver-') &> /dev/null; then
    print_debug "Patrol Service: 'webserver' not found"
-
+ fi
   cm_list=("apiserver" "apistats" "cloudsql" "enforcer" "eventtrigger" "forsetiserver" "grafana")
 
  if ! kubectl delete cm grafana-config &> /dev/null; then
@@ -82,7 +82,7 @@ if gcloud container clusters list  --zone="${PATROL_ZONE}" | awk 'NR>=2' | awk '
 
  if ! kubectl delete ingress patrol-ingress &> /dev/null; then
    print_debug "Ingress: patrol-ingress not found"
-
+ fi
 else
   print_debug "The kubernetes cluster with name "\
               "'${PATROL_KUBERNETES_CLUSTER_NAME}' does not exist "\
