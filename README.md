@@ -54,7 +54,8 @@ $ sudo chmod +x /usr/bin/terraform
 ```
 ### 2.4 Installing gcloud
 On the installer machine, if already not available, perform the below steps to install gcloud utility.
-`Note:- If gcloud is already available on the installer machine, make sure the version is 253.0.0. and above`
+
+`Note:- If gcloud is already available on the installer machine, make sure the version is 253.0.0. and above. If you are using the 'GCE VM', the gcloud SDK will be already installed to latest version. So skip the below commands and run from  section 2.4.4`
 #### 2.4.1 Add the Cloud SDK distribution URI as a package source and Make sure you have apt-transport-https installed
 ````
 $ echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
@@ -67,6 +68,9 @@ $ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --ke
 #### 2.4.3 Update and install the Cloud SDK
 ````
 $ sudo apt-get update && sudo apt-get install google-cloud-sdk=253.0.0-0
+````
+#### 2.4.4 Change the owner to the current logged in user
+````
 $ sudo chown -R $USER ~/.config/gcloud
 ````
 ### 2.5  Installing git
@@ -168,6 +172,7 @@ Navigate to the path `<Path to Patrol-installer>/patrol-k8s-marketplace/terrafor
 $ bash installer.sh
 ````
 when prompted for a value, type: 'yes'.
+
 `Note: Post successful completion of the script, few values will be displayed at the end of the script. Those values MUST be provided in the Marketplace UI during the Patrol app installation`
 ### 3.6 Patrol Installation from GCP Marketplace
 In the GCP Console, select Installer project and then from the navigation menu click on  Marketplace and search for "Patrol". 
@@ -217,5 +222,6 @@ $ cd <Path to Patrol-installer>/patrol-k8s-marketplace/terraform
 $ bash uninstall.sh
 ````
 when prompted to enter a value, type: 'yes'.
+
 `Note :- The above script would not delete IAP secrets, External Static IP and DNS record. These need to be removed manually.`
 
