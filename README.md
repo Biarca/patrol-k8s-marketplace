@@ -17,7 +17,7 @@ Follow the below instructions for installing the above mentioned assets (using a
 Follow the below instructions for installing GCP assets using script.
 ### 2.1 Prerequisites
 - One Ubuntu 18.04 machine (bare metal / VM), with the below packages. This will be the installer machine.
-- zip & unzip packages
+- zip, unzip & wget packages
 - Terraform v0.12.3
 - Gcloud v253.0.0 
 - git
@@ -34,7 +34,7 @@ $ which zip
 ```
 If the zip package is not already installed, execute the below command to install the same.
 ```
-$ sudo apt-get install -y zip
+$ sudo apt-get update && sudo apt-get install -y zip
 ```
 ### 2.3 Installing Terraform v0.12.3
 On the installer machine, perform the below steps to install Terraform v0.12.3.
@@ -55,20 +55,20 @@ $ sudo chmod +x /usr/bin/terraform
 ### 2.4 Installing gcloud
 On the installer machine, if already not available, perform the below steps to install gcloud utility.
 `Note:- If gcloud is already available on the installer machine, make sure the version is 253.0.0. and above`
-
-Download the gcloud file using the below command
-```
-$ curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-253.0.0-linux-x86_64.tar.gz
-```
-Untar the file using the below command
-```
-$ tar zxvf google-cloud-sdk-253.0.0-linux-x86_64.tar.gz google-cloud-sdk
-```
-Install gcloud using the below command, when prompted press “y” and when prompted for path you can specify the required path or press “enter” to use the default path.
-```
-$ sudo ./google-cloud-sdk/install.sh
-```
-Once installation is done close the session and re-open so that the change will effect.
+#### 2.4.1 Add the Cloud SDK distribution URI as a package source and Make sure you have apt-transport-https installed
+````
+$ echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+$ sudo apt-get install apt-transport-https ca-certificates gnupg
+````
+#### 2.4.2 Import the Google Cloud public key
+````
+$ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+````
+#### 2.4.3 Update and install the Cloud SDK
+````
+$ sudo apt-get update && sudo apt-get install google-cloud-sdk=253.0.0-0
+$ sudo chown -R $USER ~/.config/gcloud
+````
 ### 2.5  Installing git
 On the installer machine, if already NOT installed, execute the below command to install git.
 ```
@@ -103,7 +103,7 @@ $ python --version
 ```
 If either Python is not installed or Python version 2.7 is not available on the installer machine, then execute the below command for installing the same.
 ````
-$ sudo apt install python
+$ sudo apt-get install python
 ````
 # 3. Installation Procedure
 In the installer machine, create a folder (say Patrol-installer) and navigate to that folder.
@@ -167,6 +167,7 @@ Navigate to the path `<Path to Patrol-installer>/patrol-k8s-marketplace/terrafor
 ````
 $ bash installer.sh
 ````
+when prompted for a value, type: 'yes'.
 `Note: Post successful completion of the script, few values will be displayed at the end of the script. Those values MUST be provided in the Marketplace UI during the Patrol app installation`
 ### 3.6 Patrol Installation from GCP Marketplace
 In the GCP Console, select Installer project and then from the navigation menu click on  Marketplace and search for "Patrol". 
@@ -177,7 +178,7 @@ There are few manual steps which needs to be done post successful installation o
 To control who can access the Biarca Patrol UI, perform the below steps and configure IAP.
 In the GCP Console, navigate to Security > Identity-Aware Proxy and Follow the below steps:
 
-`Note: If this is the first time, then you might have to click on Configure Consent Screen and provide an application name`
+`Note: If this is the first time, then you might have to click on Configure Consent Screen button, Select type as 'Internal', Click 'Next' button, provide an application name and click 'Save' button. Navigate back to the Identity-Aware Proxy page.`
 
 - Click on **HTTPS RESOURCES** tab and Enable the toggle button beside the entry **patrol-ui-<RANDOM_ID>** to enable IAP for UI service. A pop up window is displayed.
 - Select the Checkbox  and click on**Turn ON**
@@ -187,7 +188,7 @@ In the GCP Console, navigate to Security > Identity-Aware Proxy and Follow the b
 
 `Note:- It takes around 5 minutes for the DNS record and IAP to get updated. `
 ### 4.2 Update Service Accounts
-Post successful installation of Biarca Patrol, in the installer project execute the below to remove the Owner role attached to the service accounts.
+Post successful installation of Biarca Patrol, in the installer project execute the below to remove the Owner role & Security Admin role attached to the service accounts.
 ````
 $ cd <Path to patrol-installer>/patrol-k8s-marketplace/
 $ bash remove_serviceaccount_roles.sh
@@ -208,12 +209,13 @@ Execute the below Steps:
    - Under the section **OAuth 2.0 Client IDs** click the *check-box* for the project you copied the **Name** and **Client ID**.
    - On the top click on **Delete** option.
 4. Delete the sinks created when event-trigger is enabled.
-   - Navigate to **Menu > Logging > Router**.
+   - Navigate to **Menu > Logging > Logs Router**.
    - Select the sink to be deleted and click on *Delete* on the top.
 5. Execute the below commands.
 ````
 $ cd <Path to Patrol-installer>/patrol-k8s-marketplace/terraform
-$ bash uninstall.sh 
+$ bash uninstall.sh
 ````
+when prompted to enter a value, type: 'yes'.
 `Note :- The above script would not delete IAP secrets, External Static IP and DNS record. These need to be removed manually.`
 
