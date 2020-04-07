@@ -17,7 +17,8 @@ Follow the below instructions for installing the above mentioned assets (using a
 Follow the below instructions for installing GCP assets using script.
 ### 2.1 Prerequisites
 - One Ubuntu 18.04 machine (bare metal / VM), with the below packages. This will be the installer machine.
-- zip, unzip & wget packages
+- zip & unzip packages
+- wget
 - Terraform v0.12.3
 - Gcloud v253.0.0 
 - git
@@ -35,7 +36,16 @@ If the zip package is not already installed, execute the below command to instal
 ```
 $ sudo apt-get update && sudo apt-get install -y zip
 ```
-### 2.3 Installing Terraform v0.12.3
+### 2.3 Installing wget package
+On the installer machine, execute the below command to check if wget is already installed.
+```
+$ which wget
+```
+If the wget package is not already installed, execute the below command to install the same.
+```
+$ sudo apt-get install wget -y
+```
+### 2.4 Installing Terraform v0.12.3
 On the installer machine, perform the below steps to install Terraform v0.12.3.
 
 Execute the below command to download  Terraform v0.12.3 file
@@ -51,38 +61,38 @@ Provide execute permissions to the file terraform
 ```
 $ sudo chmod +x /usr/bin/terraform
 ```
-### 2.4 Installing gcloud
+### 2.5 Installing gcloud
 On the installer machine, if already not available, perform the below steps to install gcloud utility.
 
 `Note:- If gcloud is already available on the installer machine, make sure the version is 253.0.0. and above. If you are using the 'GCE VM', the gcloud SDK will be already installed to latest version. So skip the below commands and run from  section 2.4.4`
-#### 2.4.1 Add the Cloud SDK distribution URI as a package source and Make sure you have apt-transport-https installed
+#### 2.5.1 Add the Cloud SDK distribution URI as a package source and Make sure you have apt-transport-https installed
 ````
 $ echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 $ sudo apt-get install apt-transport-https ca-certificates gnupg
 ````
-#### 2.4.2 Import the Google Cloud public key
+#### 2.5.2 Import the Google Cloud public key
 ````
 $ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
 ````
-#### 2.4.3 Update and install the Cloud SDK
+#### 2.5.3 Update and install the Cloud SDK
 ````
 $ sudo apt-get update && sudo apt-get install google-cloud-sdk=253.0.0-0
 ````
-#### 2.4.4 Change the owner to the current logged in user
+#### 2.5.4 Change the owner to the current logged in user
 ````
 $ sudo chown -R $USER ~/.config/gcloud
 ````
-### 2.5  Installing git
+### 2.6  Installing git
 On the installer machine, if already NOT installed, execute the below command to install git.
 ```
 $ sudo apt-get install git -y
 ```
-### 2.6 Installing JSON Processor jq on the Installer Machine
+### 2.7 Installing JSON Processor jq on the Installer Machine
 On the installer machine, execute the below command to install JSON Processor jq.
 ```
 $ sudo apt-get install jq -y
 ```
-### 2.7  Installing docker
+### 2.8  Installing docker
 On the installer machine, execute the below commands to install docker.
 ```
 $ sudo apt-get update && sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y
@@ -90,7 +100,7 @@ $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 $ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
 $ sudo apt-get update && sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 ```
-### 2.8  Installing kubectl
+### 2.9  Installing kubectl
 On the installer machine, execute the below commands to install kubectl.
 ```
 $ sudo apt-get update && sudo apt-get install -y apt-transport-https -y
@@ -162,7 +172,7 @@ Navigate to the path `<Path to Patrol-installer>/patrol-k8s-marketplace/terrafor
 ````
 $ bash installer.sh
 ````
-when prompted for a value, type: 'yes'.
+As part of the script execution, when prompted for a value provide 'yes'.
 
 `Note: Post successful completion of the script, few values will be displayed at the end of the script. Those values MUST be provided in the Marketplace UI during the Patrol app installation`
 ### 3.6 Patrol Installation from GCP Marketplace
@@ -174,7 +184,7 @@ There are few manual steps which needs to be done post successful installation o
 To control who can access the Biarca Patrol UI, perform the below steps and configure IAP.
 In the GCP Console, navigate to Security > Identity-Aware Proxy and Follow the below steps:
 
-`Note: If this is the first time, then you might have to click on Configure Consent Screen button, Select type as 'Internal', Click 'Next' button, provide an application name and click 'Save' button. Navigate back to the Identity-Aware Proxy page.`
+`Note: If IAP is already not enabled, Enable it. Click on CONFIGURE CONSENT SCREEN and select "Internal" option. Click on 'Next' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.`
 
 - Click on **HTTPS RESOURCES** tab and Enable the toggle button beside the entry **patrol-ui-<RANDOM_ID>** to enable IAP for UI service. A pop up window is displayed.
 - Select the Checkbox  and click on**Turn ON**
@@ -212,7 +222,7 @@ Execute the below Steps:
 $ cd <Path to Patrol-installer>/patrol-k8s-marketplace/terraform
 $ bash uninstall.sh
 ````
-when prompted to enter a value, type: 'yes'.
+As part of the script execution, when prompted for a value provide 'yes'.
 
 `Note :- The above script would not delete IAP secrets, External Static IP and DNS record. These need to be removed manually.`
 
