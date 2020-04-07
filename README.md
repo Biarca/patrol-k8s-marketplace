@@ -24,7 +24,6 @@ Follow the below instructions for installing GCP assets using script.
 - JSON processor (jq)
 - docker
 - Kubectl
-- Python v2.7
 
 If already not available, use the below instructions to install the packages on the installer machine.
 ### 2.2  Installing zip package
@@ -100,15 +99,7 @@ $ echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" |sudo tee -a /etc
 $ sudo apt-get update
 $ sudo apt-get install -y kubectl
 ```
-### 2.9  Installing Python version 2.7
-On the installer machine, execute the below commands to check if the Python version 2.7.x is already installed.
-```
-$ python --version
-```
-If either Python is not installed or Python version 2.7 is not available on the installer machine, then execute the below command for installing the same.
-````
-$ sudo apt-get install python
-````
+
 # 3. Installation Procedure
 In the installer machine, create a folder (say Patrol-installer) and navigate to that folder.
 `Note: Assumption is the Patrol installer project & Monitoring project are different.`
