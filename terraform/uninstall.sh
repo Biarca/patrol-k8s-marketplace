@@ -45,37 +45,43 @@ if gcloud container clusters list  --zone="${PATROL_ZONE}" | awk 'NR>=2' | awk '
    fi
  done
 
-  svc_list=("api-server" "enforcer" "forseti-restserver" "grafana" "webserver-tndr")
+  svc_list=("api-server" "enforcer" "forseti-restserver" "grafana")
 
  for svc in "${svc_list[@]}"; do
    if ! kubectl delete svc patrol-$svc &> /dev/null; then
-     bail 1 "Unable to remove Patrol Service '${svc}'"
+     print_debug "Patrol Service: '${svc}' not found"
    fi
  done
+
+ if ! kubectl delete svc $(kubectl get svc | grep 'patrol-webserver-') &> /dev/null; then
+   print_debug "Patrol Service: 'webserver' not found"
 
   cm_list=("apiserver" "apistats" "cloudsql" "enforcer" "eventtrigger" "forsetiserver" "grafana")
 
  if ! kubectl delete cm grafana-config &> /dev/null; then
-   bail 1 "Unable to delete the Config Map garfana-config"
+   print_debug "Patrol Config Map: 'grafana' not found"
  fi
 
  for cm in "${cm_list[@]}"; do
    if ! kubectl delete cm $cm-config-cm &> /dev/null; then
-     bail 1 "Unable to delete the Config Map '${cm}'"
+     print_debug "Patrol Config Map: '${cm}' not found"
    fi
  done
 
   sr_list=("apiserver" "cloudsql" "enforcer" "eventtrigger" "forsetiserver")
 
  if ! kubectl delete secret cloudsql-db-credentials &> /dev/null; then
-   bail 1 "Unable to delete the Cloud SQL DB Secrets"
+   print_debug "Patrol Secret: 'cloudsql-db-creds' not found"
  fi
 
   for sr in "${sr_list[@]}"; do
     if ! kubectl delete secret $sr-secret-key &> /dev/null; then
-      bail 1 "Unable to delete the Secret '${sr}'"
+      print_debug "Patrol Secret: '${cm}' not found"
     fi
   done
+
+ if ! kubectl delete ingress patrol-ingress &> /dev/null; then
+   print_debug "Ingress: patrol-ingress not found"
 
 else
   print_debug "The kubernetes cluster with name "\
