@@ -17,7 +17,7 @@ Follow the below instructions for installing the above mentioned assets (using a
 Follow the below instructions for installing GCP assets using script.
 ### 2.1 Prerequisites
 - One Ubuntu 18.04 machine (bare metal / VM), with the below packages. This will be the installer machine.
-- zip & unzip packages
+- zip
 - wget
 - Terraform v0.12.3
 - Gcloud v253.0.0 
@@ -64,7 +64,7 @@ $ sudo chmod +x /usr/bin/terraform
 ### 2.5 Installing gcloud
 On the installer machine, if already not available, perform the below steps to install gcloud utility.
 
-`Note:- If gcloud is already available on the installer machine, make sure the version is 253.0.0. and above. If you are using the 'GCE VM', the gcloud SDK will be already installed to latest version. So skip the below commands and run from  section 2.4.4`
+`Note:- If gcloud is already available on the installer machine, make sure the version is 253.0.0. and above. If you are using a 'GCE VM', the gcloud SDK will be already installed at latest version. So skip the below commands and move onto  section 2.5.4`
 #### 2.5.1 Add the Cloud SDK distribution URI as a package source and Make sure you have apt-transport-https installed
 ````
 $ echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
