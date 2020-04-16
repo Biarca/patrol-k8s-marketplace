@@ -24,6 +24,7 @@ The below packages are needed on the installer machine.
 - Terraform v0.12.3
 - Gcloud v253.0.0 
 - git
+- curl
 - JSON processor (jq)
 
 The pre-requisite packages can be installed  on the installer machine using the script **pre-req-installer.sh**, which is available in the patrol-k8s-marketplace repository.
@@ -35,7 +36,7 @@ $ git clone https://github.com/Biarca/patrol-k8s-marketplace.git
 ````
 Then execute the below commands to install the pre-requisite packages.
 ````
-$ cd patrol-k8s-marketplace
+$ cd patrol-k8s-marketplace/
 $ sudo bash pre-req-installer.sh
 ````
 
