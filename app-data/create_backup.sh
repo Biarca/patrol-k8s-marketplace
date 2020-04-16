@@ -63,8 +63,11 @@ for file in ./keys/*.json ; do
     if ! gpg --yes --batch --passphrase=patrol-id -c $file &> /dev/null; then
         bail 1 "Unable to copy the Encrypt service account"
     fi
-done ;
+done 
 
+########################################
+# Backup the Required files
+########################################
 if ! gsutil -m cp -r ./keys/*.gpg gs://${SCANNER_BUCKET}/backup/keys &> /dev/null; then
     bail 1 "Unable to copy default Patrol json keys to GCS bucket '${SCANNER_BUCKET}'"
 fi
@@ -73,22 +76,38 @@ if ! gsutil -m cp -r ${PATROL_OWNER_SA}.gpg gs://${SCANNER_BUCKET}/backup/psa/ &
     bail 1 "Unable to copy default patrol SA files to GCS bucket '${SCANNER_BUCKET}'"
 fi
 
+if ! gsutil -m cp -r ../terraform/variables.tf gs://${SCANNER_BUCKET}/tform/ &> /dev/null; then
+    bail 1 "Failed to copy the required terraform files"
+fi
+
+if ! gsutil -m cp -r ../terraform/*.tfstate gs://${SCANNER_BUCKET}/tform/ &> /dev/null; then
+    bail 1 "Unable to copy the terraform tfstate file"
+fi
+########################################
+# Remove the Unwanted and Backed Up files
+########################################
+
 if ! rm -rf ${PATROL_OWNER_SA}.gpg ./keys/*.json ./keys/*.gpg &> /dev/null; then
     bail 1 "Unable to Remove the Unwanted Keys"
 fi
 
-print_debug "#################################"
+if ! ( rm -rf $(ls *.envs | grep -v "uninstall.envs") &> /dev/null ); then
+    echo "Failed to delete the envs files"
+fi
+
+########################################
+#Providing INFO required for Patrol Marketplace Installation
+########################################
+print_debug "##################################################"
 print_debug "Please Provide the below Details During Marketplace installation"
-print_debug "NAMESPACE: 'default'"
+print_debug "Kubernetes Cluster: '${PATROL_KUBERNETES_CLUSTER_NAME}'"
 print_debug "RANDOM ID: '${RANDOM_ID}'"
 print_debug "STATIC IP NAME: '${STATIC_IP_NAME}'"
 print_debug "PATROL DOMAIN NAME: '${PATROL_DOMAIN_NAME}'"
 print_debug "SCANNER BUCKET: '${SCANNER_BUCKET}'"
 print_debug "---------------------------------"
-print_debug "Post Marketplace Installation Steps:"
-print_debug "1. Enable IAP without Fail."
-print_debug "2. Run the script 'remove_serviceaccount_roles.sh' to remove the roles for the service account."
+print_debug " Post Patrol Application successful installlation, Follow the below: "
+print_debug  "Run the script 'remove_serviceaccount_roles.sh' to remove the roles for the service account."
 print_debug "---------------------------------"
 print_debug "Infrastructure on GCP has been created successfully."
-print_debug "NOTE: Back up the terraform files as it will be needed during uninstallation of Patrol."
 print_debug "#################################"

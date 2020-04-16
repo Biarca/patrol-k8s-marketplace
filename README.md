@@ -15,110 +15,34 @@ Installation of Patrol in GCP Marketplace needs some assets (listed below) to be
 Follow the below instructions for installing the above mentioned assets (using an automated script) and also Patrol application in GCP Marketplace.
 ## 2. Steps to Install GCP Assets using Script
 Follow the below instructions for installing GCP assets using script.
-### 2.1 Prerequisites
-- One Ubuntu 18.04 machine (bare metal / VM), with the below packages. This will be the installer machine.
+### 2.1 Installer Machine
+A Ubuntu 18.04 machine (bare metal / VM) is needed for executing steps to create required GCP Assets.
+### 2.2 Prerequisites
+The below packages are needed on the installer machine.
 - zip
 - wget
 - Terraform v0.12.3
 - Gcloud v253.0.0 
 - git
 - JSON processor (jq)
-- docker
-- Kubectl
 
-If already not available, use the below instructions to install the packages on the installer machine.
-### 2.2  Installing zip package
-On the installer machine, execute the below command to check if zip is already installed.
-```
-$ which zip
-```
-If the zip package is not already installed, execute the below command to install the same.
-```
-$ sudo apt-get update && sudo apt-get install -y zip
-```
-### 2.3 Installing wget package
-On the installer machine, execute the below command to check if wget is already installed.
-```
-$ which wget
-```
-If the wget package is not already installed, execute the below command to install the same.
-```
-$ sudo apt-get install wget -y
-```
-### 2.4 Installing Terraform v0.12.3
-On the installer machine, perform the below steps to install Terraform v0.12.3.
+The pre-requisite packages can be installed  on the installer machine using the script **pre-req-installer.sh**, which is available in the patrol-k8s-marketplace repository.
 
-Execute the below command to download  Terraform v0.12.3 file
-````
-$ wget https://releases.hashicorp.com/terraform/0.12.3/terraform_0.12.3_linux_amd64.zip
-````
-The zip file has only one file named terraform. Unzip the content of the zip file to /usr/bin
-```
-$ unzip terraform_0.12.3_linux_amd64.zip 
-$ sudo mv terraform /usr/bin/
-```
-Provide execute permissions to the file terraform
-```
-$ sudo chmod +x /usr/bin/terraform
-```
-### 2.5 Installing gcloud
-On the installer machine, if already not available, perform the below steps to install gcloud utility.
-
-`Note:- If gcloud is already available on the installer machine, make sure the version is 253.0.0. and above. If you are using a 'GCE VM', the gcloud SDK will be already installed at latest version. So skip the below commands and move onto  section 2.5.4`
-#### 2.5.1 Add the Cloud SDK distribution URI as a package source and Make sure you have apt-transport-https installed
-````
-$ echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-$ sudo apt-get install apt-transport-https ca-certificates gnupg
-````
-#### 2.5.2 Import the Google Cloud public key
-````
-$ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-````
-#### 2.5.3 Update and install the Cloud SDK
-````
-$ sudo apt-get update && sudo apt-get install google-cloud-sdk=253.0.0-0
-````
-#### 2.5.4 Change the owner to the current logged in user
-````
-$ sudo chown -R $USER ~/.config/gcloud
-````
-### 2.6  Installing git
-On the installer machine, if already NOT installed, execute the below command to install git.
-```
-$ sudo apt-get install git -y
-```
-### 2.7 Installing JSON Processor jq on the Installer Machine
-On the installer machine, execute the below command to install JSON Processor jq.
-```
-$ sudo apt-get install jq -y
-```
-### 2.8  Installing docker
-On the installer machine, execute the below commands to install docker.
-```
-$ sudo apt-get update && sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y
-$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
-$ sudo apt-get update && sudo apt-get install docker-ce docker-ce-cli containerd.io -y
-```
-### 2.9  Installing kubectl
-On the installer machine, execute the below commands to install kubectl.
-```
-$ sudo apt-get update && sudo apt-get install -y apt-transport-https -y
-$ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-$ echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" |sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-$ sudo apt-get update
-$ sudo apt-get install -y kubectl
-```
-
-# 3. Installation Procedure
-In the installer machine, create a folder (say Patrol-installer) and navigate to that folder.
-`Note: Assumption is the Patrol installer project & Monitoring project are different.`
-### 3.1 Cloning Biarca Patrol Repository
+The first task would be to clone the repository **"patrol-k8s-marketplace"**.
 Clone the git repository by using the below commands:
 ````
 $ git clone https://github.com/Biarca/patrol-k8s-marketplace.git
 ````
-### 3.2 Creating Service Account
+Then execute the below commands to install the pre-requisite packages.
+````
+$ cd patrol-k8s-marketplace**
+$ sudo bash pre-req-installer.sh
+````
+
+# 3. Installation Procedure
+In the installer machine, create a folder (say Patrol-installer) and navigate to that folder.
+`Note: Assumption is the Patrol installer project & Monitoring project are different.`
+### 3.1 Creating Service Account
 Create a Service account in the installer project and assign the below mentioned roles.
   - **Installer Project** - Add Project Owner role for Installer Project service account
   - **Monitoring Project** - Add Security Admin role for Installer Project service account
@@ -127,9 +51,9 @@ Create a Service account in the installer project and assign the below mentioned
 In the GCP Console, navigate to **IAM & Admin >  Click on "Add"**. Under “New members” give the Installer project service account and select “Security Admin” as role and click on “Save”.
 
 Download the key in JSON format and copy them to the ````<Path-To-Patrol-installer>/patrol-k8s-marketplace```` directory in the installer machine. 
-### 3.3 Creating External Static Address and DNS Record
+### 3.2 Creating External Static Address and DNS Record
 For accessing Biarca Patrol UI using an FQDN, perform the below steps in GCP.
-#### 3.3.1 Create External Static IP
+#### 3.2.1 Create External Static IP
 In GCP console, navigate to <Installer Project> -> NETWORKING -> VPC network -> External IP addresses and click on RESERVE STATIC ADDRESSES.
 Make sure to provide values as mentioned below and click on the Reserve button.
 | **Name** | `<Any user desired name>` |
@@ -139,9 +63,9 @@ Make sure to provide values as mentioned below and click on the Reserve button.
 | **Type** | `Global` |
 
 **Note:** Make a note of the External Static IP address.
-#### 3.3.2 Create a DNS Record for Reserved External Static IP
+#### 3.2.2 Create a DNS Record for Reserved External Static IP
 Create a public domain name (or subdomain) and update its  **'A'** record with reserved static IP. Follow your DNS provider instructions to know more about managing DNS records.
-### 3.4 Updating Configuration File
+### 3.3 Updating Configuration File
 Navigate to the terraform folder.
 ````
 $ cd <Path to Patrol-installer>/patrol-k8s-marketplace/terraform
@@ -175,7 +99,7 @@ $ bash installer.sh
 As part of the script execution, when prompted for a value provide 'yes'.
 
 `Note: Post successful completion of the script, few values will be displayed at the end of the script. Those values MUST be provided in the Marketplace UI during the Patrol app installation`
-### 3.6 Patrol Installation from GCP Marketplace
+### 3.4 Patrol Installation from GCP Marketplace
 In the GCP Console, select Installer project and then from the navigation menu click on  Marketplace and search for "Patrol". 
 Follow the on-screen instructions and provide the required input values that were used for GCP assets creation as part of section [3.4] to populate the form.
 ## 4. Post Installation Steps
@@ -217,12 +141,22 @@ Execute the below Steps:
 4. Delete the sinks created when event-trigger is enabled.
    - Navigate to **Menu > Logging > Logs Router**.
    - Select the sink to be deleted and click on *Delete* on the top.
-5. Execute the below commands.
+
+**Note: Post-installation if you have deleted the installer machine, execute the commands from the section [2.1]**
+5. Navigate to `<Path to Patrol-installer>/patrol-k8s-marketplace/app-data`
+6. Create a new file with name **'uninstall.envs'** and provide the below details.
+  - PROJECT_ID=<Project-ID of the Installer Project>
+  - PATROL_OWNER_SA=<Full Path of the Service Account Key file> # Mentioned in section [3.3] for PATROL_KEYFILE
+  - MONITOR_OWNER_SA=<Full Path of the Service Account Key file> # Mentioned in Section [3.3] for PATROL_KEYFILE
+  - SCANNER_BUCKET=<Patrol Scanner Bucket Name which starts with prefix 'patrol-scanner'>
+  - REGION=<GCP Region in which the Kubernetes Cluster Created> # Ex: 'us-central1'
+  - PATROL_KUBERNETES_CLUSTER_NAME=<Name of the Kubernetes cluster which starts with prefix 'patrol-kube-cluster'>
+  - PATROL_ZONE=<GCP zone in which the Kubernetes Cluster Created> # Ex: 'us-central1-a'
+
+7. Execute the below commands.
 ````
-$ cd <Path to Patrol-installer>/patrol-k8s-marketplace/terraform
 $ bash uninstall.sh
 ````
 As part of the script execution, when prompted for a value provide 'yes'.
 
 `Note :- The above script would not delete IAP secrets, External Static IP and DNS record. These need to be removed manually.`
-

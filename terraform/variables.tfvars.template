@@ -1,0 +1,5 @@
+# Owner serviceaccount key file path of the project where biarca patrol has to be installed
+patrol_project_owner_serviceaccount_key_file_path=${PATROL_OWNER_SA}
+
+# Owner serviceaccount key file path of the project which biarca patrol will be monitoring
+forseti_project_owner_serviceaccount_key_file_path=${PATROL_MONITOR_SA}

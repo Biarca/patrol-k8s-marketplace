@@ -198,6 +198,7 @@ resource "null_resource" "uninstall_envs" {
     echo PROJECT_ID=${var.patrol_projectid}  >> ${var.uninstall_env_files_path}
     echo PATROL_OWNER_SA=${var.patrol_project_owner_serviceaccount_key_file_path}  >> ${var.uninstall_env_files_path}
     echo MONITOR_OWNER_SA=${var.forseti_project_owner_serviceaccount_key_file_path} >> ${var.uninstall_env_files_path}
+    echo SCANNER_BUCKET=${module.create_patrol_scanner_bucket.name} >> ${var.uninstall_env_files_path}
     echo REGION=${var.patrol_project_default_region}  >> ${var.uninstall_env_files_path}
     echo PATROL_KUBERNETES_CLUSTER_NAME=${var.patrol_gke_cluster_name} >> ${var.uninstall_env_files_path}
     echo PATROL_ZONE=${var.patrol_compute_instance_zone} >> ${var.uninstall_env_files_path}
