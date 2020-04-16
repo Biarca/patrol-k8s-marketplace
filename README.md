@@ -35,7 +35,7 @@ $ git clone https://github.com/Biarca/patrol-k8s-marketplace.git
 ````
 Then execute the below commands to install the pre-requisite packages.
 ````
-$ cd patrol-k8s-marketplace**
+$ cd patrol-k8s-marketplace
 $ sudo bash pre-req-installer.sh
 ````
 
