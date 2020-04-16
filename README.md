@@ -91,7 +91,7 @@ Below is the list of parameters in **installer_envs** file, which needs to be up
 - **PATROL_STATS_TIME**=<#Time frame in minutes to update Biarca Patrol stats info. PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15. Example:- 15>
 
 **Note:** If Installer Project & Monitoring project are same, provide the same values for  ***PATROL_PROJECTID*** & ***MONITOR_PROJECTID***.
-### 3.5 Creating Patrol Specific GCP Resources
+### 3.4 Creating Patrol Specific GCP Resources
 Navigate to the path `<Path to Patrol-installer>/patrol-k8s-marketplace/terraform` and execute the below command to install the required GCP resources in the installer project.
 ````
 $ bash installer.sh
@@ -99,9 +99,9 @@ $ bash installer.sh
 As part of the script execution, when prompted for a value provide 'yes'.
 
 `Note: Post successful completion of the script, few values will be displayed at the end of the script. Those values MUST be provided in the Marketplace UI during the Patrol app installation`
-### 3.4 Patrol Installation from GCP Marketplace
+### 3.5 Patrol Installation from GCP Marketplace
 In the GCP Console, select Installer project and then from the navigation menu click on  Marketplace and search for "Patrol". 
-Follow the on-screen instructions and provide the required input values that were used for GCP assets creation as part of section [3.4] to populate the form.
+Follow the on-screen instructions and provide the required input values that were used for GCP assets creation as part of section [3.3] to populate the form.
 ## 4. Post Installation Steps
 There are few manual steps which needs to be done post successful installation of Patrol application from marketplace.
 ### 4.1 Enabling IAP
