@@ -24,9 +24,10 @@ The below packages are needed on the installer machine.
 - Terraform v0.12.3
 - Gcloud v253.0.0 
 - git
+- curl
 - JSON processor (jq)
 
-The pre-requisite packages can be installed  on the installer machine using the script **pre-req-installer****.sh**, which is available in the **patrol-k8s-marketplace** repository.
+The pre-requisite packages can be installed  on the installer machine using the script **pre-req-installer.sh**, which is available in the **patrol-k8s-marketplace** repository.
 
 In the installer machine, create a folder (say Patrol-installer) and navigate to that folder. Install the 'git' package in the machine if not already installed using the below command:
 ````
@@ -42,13 +43,13 @@ $ cd patrol-k8s-marketplace/
 $ sudo bash pre-req-installer.sh
 ````
 # 3. Installation Procedure
-`Note: Assumption is the Patrol installer project & Monitoring project are different.`
+`**Note:** Assumption is the Patrol installer project & Monitoring project are different.`
 ### 3.1 Creating Service Account
 Create a Service account in the installer project and assign the below mentioned roles.
   - **Installer Project** - Add Project Owner role for Installer Project service account
   - **Monitoring Project** - Add Security Admin role for Installer Project service account
 
-**Note:** If the installer project and monitoring project are same, then provide Owner role of the project to Service acccount.
+**Note:** If the installer project and monitoring project are same, then provide Owner role of the project to Service account.
 
 In the GCP Console, navigate to **IAM & Admin >  Click on "Add"**. Under “New members” give the Installer project service account and select “Security Admin” as role and click on “Save”.
 
@@ -100,7 +101,7 @@ $ bash installer.sh
 ````
 As part of the script execution, when prompted for a value provide 'yes'.
 
-`Note: Post successful completion of the script, few values will be displayed at the end of the script. Those values MUST be provided in the Marketplace UI during the Patrol app installation`
+`**Note:** Post successful completion of the script, few values will be displayed at the end of the script. Those values MUST be provided in the Marketplace UI during the Patrol app installation`
 ### 3.5 Patrol Installation from GCP Marketplace
 In the GCP Console, select Installer project and then from the navigation menu click on  Marketplace and search for "Patrol". 
 Follow the on-screen instructions and provide the required input values that were used for GCP assets creation as part of section [3.3] to populate the form.
@@ -110,15 +111,15 @@ There are few manual steps which needs to be done post successful installation o
 To control who can access the Biarca Patrol UI, perform the below steps and configure IAP.
 In the GCP Console, navigate to Security > Identity-Aware Proxy and Follow the below steps:
 
-`Note: If IAP is already not enabled, Enable it. Click on CONFIGURE CONSENT SCREEN and select "Internal" option. Click on 'Next' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.`
+`**Note:** If IAP is already not enabled, Enable it. Click on CONFIGURE CONSENT SCREEN and select "Internal" option. Click on 'Next' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.`
 
 - Click on **HTTPS RESOURCES** tab and Enable the toggle button beside the entry **patrol-webserver-<RANDOM_ID>** to enable IAP for UI service. A pop up window is displayed.
 - Select the Checkbox  and click on**Turn ON**
-- Select the checkbox of the**patrol-webserver-<RANDOM_ID>** (created as part of the above step). A panel is displayed on the right side.
+- Select the checkbox of the **patrol-webserver-<RANDOM_ID>** (created as part of the above step). A panel is displayed on the right side.
 - Click on the **ADD MEMBER** button.
 - In the New members box, provide an **email id** and from the Roles drop down, select **Cloud IAP -> IAP-Secured Web App User**.
 
-`Note:- It takes around 5 minutes for the DNS record and IAP to get updated. `
+`**Note:** It takes around 5 minutes for the DNS record and IAP to get updated. `
 ### 4.2 Update Service Accounts
 Post successful installation of Biarca Patrol, in the installer project execute the below to remove the Owner role & Security Admin role attached to the service accounts.
 ````
@@ -129,15 +130,15 @@ $ bash remove_serviceaccount_roles.sh
 ## 5. UnInstalling Patrol
 To uninstall the Patrol app from the marketplace, follow the below steps. All the GCP Resources which are created as part of the installation will be removed.
 
-`Note: Before performing the below, make sure that the installer service account has Project Owner role and monitor service account has Security Admin role.`
+`**Note:** Before performing the below, make sure that the installer service account has Project Owner role and monitor service account has Security Admin role.`
 
 Execute the below Steps:
 1. From **Biarca Patrol UI -> Dashboard**, delete all the project(s).
 2. From **Biarca Patrol UI -> Resource Monitoring**, delete all the project(s) which were added post installation.
 3. From GCP Console delete “IAP Secrets”. If the installer project is used for multiple projects then it would be difficult to find out the appropriate IAP secret as a unique name will be created for secrets at the time of installation.
 
-3.1 In order to identify the IAP secret for the specific project follow the below steps:
-   - Now navigate to "**Menu > IAM & Admin > Identity-Aware Proxy**”.
+   3.a In order to identify the IAP secret for the specific project follow the below steps:
+   - Navigate to "**Menu > IAM & Admin > Identity-Aware Proxy**”.
    - Under **HTTPS Resources** right click on the 3 dots  for the web-browser and select **Edit OAuth Client**.
    - Copy the **Name** and **Client ID** of the project.
    - Now Navigate to **Menu > APIs & Services > Credentials**
@@ -147,14 +148,13 @@ Execute the below Steps:
    - Navigate to **Menu > Logging > Logs Router**.
    - Select the sink to be deleted and click on *Delete* on the top.
 
-**Note: Post-installation if you have deleted the 'patrol-k8s-marketplace' directory in the installer machine, execute the commands from the section [2.2] & section [3.1]**
+**Note:** Post-installation if you have deleted the 'patrol-k8s-marketplace' directory in the installer machine, execute the commands from the `section [2.2] & section [3.1]` above.
 
 5. Navigate to `<Path to Patrol-installer>/patrol-k8s-marketplace/app-data`.
 ````
 $ cd <Path to Patrol-installer>/patrol-k8s-marketplace/app-data/
 ````
-6. If the **'uninstall.envs'** file is not available, then create a new file with name **'uninstall.envs'**.
-7. Provide the below details in the **uninstall.envs** file and save it.
+6. If the **'uninstall.envs'** file is not available, then create a new file with name **'uninstall.envs'** and provide the below details and Save it.
     - **PROJECT_ID**=<#Project-ID of the Installer Project>
     - **PATROL_OWNER_SA**=<#Full Path of the Service Account Key file> # Created in section [3.1]
     - **MONITOR_OWNER_SA**=<#Full Path of the Service Account Key file> # Mentioned in Section [3.1]
@@ -163,11 +163,15 @@ $ cd <Path to Patrol-installer>/patrol-k8s-marketplace/app-data/
     - **PATROL_KUBERNETES_CLUSTER_NAME**=<#Name of the Kubernetes cluster which starts with prefix'patrol-kube-cluster'>
     - **PATROL_ZONE**=<#Zone in which the GCP resources created> # Ex: 'us-central1-a'
 
-8. Execute the below commands.
+**Note:** If the file 'uninstall.envs' already exists, then make sure all the values in the file are valid.
+
+7. Navigate to the `<Path to Patrol-installer>/patrol-k8s-marketplace/terraform/` directory and execute the below command.
 ````
 $ bash uninstall.sh
 ````
 As part of the script execution, when prompted for a value provide 'yes'.
 
-`Note :- The above script would not delete External Static IP and DNS record which are created in section [3.2]. These need to be removed manually.`
+8. Execute section [4.2] to remove the Owner role & Security Admin role attached to the service accounts.
+
+`**Note** :- The above script would not delete External Static IP and DNS record which are created in section [3.2] above. These need to be removed manually.`
 
