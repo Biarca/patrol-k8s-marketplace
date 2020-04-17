@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-pkg_list=("wget" "jq" "zip" "unzip" "git" "terraform" "gcloud")
+pkg_list=("wget" "jq" "curl" "zip" "unzip" "git" "terraform" "gcloud")
 
 #######################################
 # Exits the Code if condition not Met
