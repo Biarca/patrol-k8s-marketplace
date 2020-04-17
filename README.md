@@ -24,13 +24,15 @@ The below packages are needed on the installer machine.
 - Terraform v0.12.3
 - Gcloud v253.0.0 
 - git
-- curl
 - JSON processor (jq)
 
-The pre-requisite packages can be installed  on the installer machine using the script **pre-req-installer.sh**, which is available in the patrol-k8s-marketplace repository.
+The pre-requisite packages can be installed  on the installer machine using the script **pre-req-installer****.sh**, which is available in the **patrol-k8s-marketplace** repository.
 
-The first task would be to clone the repository **"patrol-k8s-marketplace"**.
-Clone the git repository by using the below commands:
+In the installer machine, create a folder (say Patrol-installer) and navigate to that folder. Install the 'git' package in the machine if not already installed using the below command:
+````
+$ sudo apt-get install -y git
+````
+Clone the **"patrol-k8s-marketplace"** repository by using the below command:
 ````
 $ git clone https://github.com/Biarca/patrol-k8s-marketplace.git
 ````
@@ -39,14 +41,13 @@ Then execute the below commands to install the pre-requisite packages.
 $ cd patrol-k8s-marketplace/
 $ sudo bash pre-req-installer.sh
 ````
-
 # 3. Installation Procedure
-In the installer machine, create a folder (say Patrol-installer) and navigate to that folder.
 `Note: Assumption is the Patrol installer project & Monitoring project are different.`
 ### 3.1 Creating Service Account
 Create a Service account in the installer project and assign the below mentioned roles.
   - **Installer Project** - Add Project Owner role for Installer Project service account
   - **Monitoring Project** - Add Security Admin role for Installer Project service account
+
 **Note:** If the installer project and monitoring project are same, then provide Owner role of the project to Service acccount.
 
 In the GCP Console, navigate to **IAM & Admin >  Click on "Add"**. Under “New members” give the Installer project service account and select “Security Admin” as role and click on “Save”.
@@ -55,7 +56,7 @@ Download the key in JSON format and copy them to the ````<Path-To-Patrol-install
 ### 3.2 Creating External Static Address and DNS Record
 For accessing Biarca Patrol UI using an FQDN, perform the below steps in GCP.
 #### 3.2.1 Create External Static IP
-In GCP console, navigate to <Installer Project> -> NETWORKING -> VPC network -> External IP addresses and click on RESERVE STATIC ADDRESSES.
+In GCP console, navigate to Menu -> NETWORKING -> VPC network -> External IP addresses and click on RESERVE STATIC ADDRESSES.
 Make sure to provide values as mentioned below and click on the Reserve button.
 | **Name** | `<Any user desired name>` |
 | :---        |    :----:   |
@@ -111,9 +112,9 @@ In the GCP Console, navigate to Security > Identity-Aware Proxy and Follow the b
 
 `Note: If IAP is already not enabled, Enable it. Click on CONFIGURE CONSENT SCREEN and select "Internal" option. Click on 'Next' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.`
 
-- Click on **HTTPS RESOURCES** tab and Enable the toggle button beside the entry **patrol-ui-<RANDOM_ID>** to enable IAP for UI service. A pop up window is displayed.
+- Click on **HTTPS RESOURCES** tab and Enable the toggle button beside the entry **patrol-webserver-<RANDOM_ID>** to enable IAP for UI service. A pop up window is displayed.
 - Select the Checkbox  and click on**Turn ON**
-- Select the checkbox of the**patrol-ui-<RANDOM_ID>** (created as part of the above step). A panel is displayed on the right side.
+- Select the checkbox of the**patrol-webserver-<RANDOM_ID>** (created as part of the above step). A panel is displayed on the right side.
 - Click on the **ADD MEMBER** button.
 - In the New members box, provide an **email id** and from the Roles drop down, select **Cloud IAP -> IAP-Secured Web App User**.
 
@@ -127,11 +128,14 @@ $ bash remove_serviceaccount_roles.sh
 
 ## 5. UnInstalling Patrol
 To uninstall the Patrol app from the marketplace, follow the below steps. All the GCP Resources which are created as part of the installation will be removed.
+
 `Note: Before performing the below, make sure that the installer service account has Project Owner role and monitor service account has Security Admin role.`
+
 Execute the below Steps:
 1. From **Biarca Patrol UI -> Dashboard**, delete all the project(s).
 2. From **Biarca Patrol UI -> Resource Monitoring**, delete all the project(s) which were added post installation.
 3. From GCP Console delete “IAP Secrets”. If the installer project is used for multiple projects then it would be difficult to find out the appropriate IAP secret as a unique name will be created for secrets at the time of installation.
+
 3.1 In order to identify the IAP secret for the specific project follow the below steps:
    - Now navigate to "**Menu > IAM & Admin > Identity-Aware Proxy**”.
    - Under **HTTPS Resources** right click on the 3 dots  for the web-browser and select **Edit OAuth Client**.
@@ -143,21 +147,27 @@ Execute the below Steps:
    - Navigate to **Menu > Logging > Logs Router**.
    - Select the sink to be deleted and click on *Delete* on the top.
 
-**Note: Post-installation if you have deleted the installer machine, execute the commands from the section [2.1]**
-5. Navigate to `<Path to Patrol-installer>/patrol-k8s-marketplace/app-data`
-6. Create a new file with name **'uninstall.envs'** and provide the below details.
-  - PROJECT_ID=<Project-ID of the Installer Project>
-  - PATROL_OWNER_SA=<Full Path of the Service Account Key file> # Mentioned in section [3.3] for PATROL_KEYFILE
-  - MONITOR_OWNER_SA=<Full Path of the Service Account Key file> # Mentioned in Section [3.3] for PATROL_KEYFILE
-  - SCANNER_BUCKET=<Patrol Scanner Bucket Name which starts with prefix 'patrol-scanner'>
-  - REGION=<GCP Region in which the Kubernetes Cluster Created> # Ex: 'us-central1'
-  - PATROL_KUBERNETES_CLUSTER_NAME=<Name of the Kubernetes cluster which starts with prefix 'patrol-kube-cluster'>
-  - PATROL_ZONE=<GCP zone in which the Kubernetes Cluster Created> # Ex: 'us-central1-a'
+**Note: Post-installation if you have deleted the 'patrol-k8s-marketplace' directory in the installer machine, execute the commands from the section [2.2] & section [3.1]**
 
-7. Execute the below commands.
+5. Navigate to `<Path to Patrol-installer>/patrol-k8s-marketplace/app-data`.
+````
+$ cd <Path to Patrol-installer>/patrol-k8s-marketplace/app-data/
+````
+6. If the **'uninstall.envs'** file is not available, then create a new file with name **'uninstall.envs'**.
+7. Provide the below details in the **uninstall.envs** file and save it.
+    - **PROJECT_ID**=<#Project-ID of the Installer Project>
+    - **PATROL_OWNER_SA**=<#Full Path of the Service Account Key file> # Created in section [3.1]
+    - **MONITOR_OWNER_SA**=<#Full Path of the Service Account Key file> # Mentioned in Section [3.1]
+    - **SCANNER_BUCKET**=<#Patrol Scanner Bucket Name which starts with prefix 'patrol-scanner'>
+    - **REGION**=<#GCP Region in which the GCP resources created> # Ex: 'us-central1'
+    - **PATROL_KUBERNETES_CLUSTER_NAME**=<#Name of the Kubernetes cluster which starts with prefix'patrol-kube-cluster'>
+    - **PATROL_ZONE**=<#Zone in which the GCP resources created> # Ex: 'us-central1-a'
+
+8. Execute the below commands.
 ````
 $ bash uninstall.sh
 ````
 As part of the script execution, when prompted for a value provide 'yes'.
 
-`Note :- The above script would not delete IAP secrets, External Static IP and DNS record. These need to be removed manually.`
+`Note :- The above script would not delete External Static IP and DNS record which are created in section [3.2]. These need to be removed manually.`
+
