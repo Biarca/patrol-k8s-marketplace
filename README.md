@@ -27,7 +27,7 @@ The below packages are needed on the installer machine.
 - curl
 - JSON processor (jq)
 
-The pre-requisite packages can be installed  on the installer machine using the script **pre-req-installer.sh**, which is available in the **patrol-k8s-marketplace** repository.
+The pre-requisite packages can be installed  on the installer machine using the script **pre-req-installer.sh**, which is available in the [patrol-k8s-marketplace](https://github.com/Biarca/patrol-k8s-marketplace) repository.
 
 In the installer machine, create a folder (say Patrol-installer) and navigate to that folder. Install the 'git' package in the machine if not already installed using the below command:
 ````
@@ -44,7 +44,9 @@ $ sudo bash pre-req-installer.sh
 ````
 # 3. Steps to Install GCP Assets using Script
 Follow the below instructions for installing GCP assets using script.
+
 **Note:** Assumption is the Patrol installer project & Monitoring project are different.
+
 ### 3.1 Creating Service Account
 Create a Service account in the installer project and assign the below mentioned roles.
   - Add 'Project Owner' role of the Installer Project
@@ -52,9 +54,9 @@ Create a Service account in the installer project and assign the below mentioned
 
 **Note:** If the installer project and monitoring project are same, then provide Owner role of the project to Service account.
 
-In the GCP Console, navigate to **IAM & Admin >  Click on "Add"**. Under “New members” give the Installer project service account and select “Security Admin” as role and click on “Save”.
+In the GCP Console, select Monitoring project and navigate to **IAM & Admin >  Click on "Add"**. Under “New members” provide the Installer project service account and select “Security Admin” as role and click on “Save”.
 
-Download the key in JSON format and copy them to the ````<Path-To-Patrol-installer>/patrol-k8s-marketplace```` directory in the installer machine. 
+Download the installer project service account key in JSON format and copy them to the ````<Path-To-Patrol-installer>/patrol-k8s-marketplace```` directory in the installer machine. 
 ### 3.2 Creating External Static Address and DNS Record
 For accessing Biarca Patrol UI using an FQDN, perform the below steps in GCP.
 #### 3.2.1 Create External Static IP
