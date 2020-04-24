@@ -13,8 +13,8 @@ Installation of Patrol in GCP Marketplace needs some assets (listed below) to be
 - MySQL instance - 1 [2 databases].
 
 Follow the below instructions for installing the above mentioned assets (using an automated script) and also Patrol application in GCP Marketplace.
-## 2. Steps to Install GCP Assets using Script
-Follow the below instructions for installing GCP assets using script.
+## 2. Setup an Installer Machine
+Follow the below instructions for setting an installer machine, from which script to create GCP assets can be executed.
 ### 2.1 Installer Machine
 A Ubuntu 18.04 machine (bare metal / VM) is needed for executing steps to create required GCP Assets.
 ### 2.2 Prerequisites
@@ -42,7 +42,8 @@ Then execute the below commands to install the pre-requisite packages.
 $ cd patrol-k8s-marketplace/
 $ sudo bash pre-req-installer.sh
 ````
-# 3. Installation Procedure
+# 3. Steps to Install GCP Assets using Script
+Follow the below instructions for installing GCP assets using script.
 **Note:** Assumption is the Patrol installer project & Monitoring project are different.
 ### 3.1 Creating Service Account
 Create a Service account in the installer project and assign the below mentioned roles.
