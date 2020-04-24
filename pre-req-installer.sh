@@ -16,7 +16,7 @@ function bail() {
 # Installs terraform version 0.12.3
 #######################################
 function install_terraform() {
-
+    echo "Installing terraform package, please wait.."
     if ! wget https://releases.hashicorp.com/terraform/0.12.3/terraform_0.12.3_linux_amd64.zip &> /dev/null; then
         bail 1 "Unable to download the terraform from hashicorp"
     fi
@@ -32,6 +32,8 @@ function install_terraform() {
 # Installs the Gcloud version 253.0.0
 #######################################
 function install_gcloud() {
+    echo "Installing Gcloud package, please wait.."
+
     if ! echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" |  sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &> /dev/null; then
         bail 1 "Unable to add sources list required for gcloud"
     fi
@@ -50,7 +52,7 @@ function install_gcloud() {
 # Updates & Installs packages required
 ############################################
 echo "Updating the packages list .."
-if ! ( apt-get update -y &> /dev/null ); then
+if ! ( apt-get update &> /dev/null ); then
     bail 1 "Apt failed to update packages list"
 fi
 echo "Update is Successful."
@@ -59,40 +61,40 @@ for pkg in "${pkg_list[@]}"; do
     if [[ "${pkg}" == "terraform" ]]; then
         echo "Checking for the package: '${pkg}'"
         if ! which "${pkg}" &> /dev/null; then
-            echo "Package Not Found: Installing .."
+            echo "'${pkg}' package not found. Installing .."
             install_terraform
         else
             echo "Package Found: Checking version .."
             tf_ver=$(terraform -v | head -n 1 | tr "v" " " | awk '{print $2}')
             if dpkg --compare-versions "${tf_ver}" gt 0.12.2; then
-                echo "Package Version: Supported"
+                echo "'${pkg}' package Version is Supported"
             else
-                echo "Package Version: Not Supported. Updating to v0.12.3"
+                echo "'${pkg}' package Version is not supported. Updating to v0.12.3"
                 install_terraform
             fi
         fi
     elif [[ "${pkg}" == "gcloud" ]]; then
         echo "Checking for the package: '${pkg}'"
         if ! which "${pkg}" &> /dev/null; then
-            echo "Package Not Found: Installing .."
+            echo "'${pkg}' package not found. Installing .."
             install_gcloud
         else
-            echo "Package Found: Checking version .."
+            echo "'${pkg}' package found. Checking version .."
             gc_ver=$(gcloud -v | grep SDK | awk '{print $4}')
             if dpkg --compare-versions "${gc_ver}" gt 253.0.0; then
-                echo "Package Version: Supported"
+                echo "'${pkg}' package version supported"
             else
-                echo "Package Version: Not Supported. Updating to v253.0.0"
+                echo "'${pkg}' package version not supported. Updating to v253.0.0"
                 install_cloud
             fi
         fi
     else
         if ! which "${pkg}" &> /dev/null; then
-            echo "Package Not Found: Installing .."
+            echo "'${pkg}' package not found. Installing .."
             if ! apt-get install "${pkg}" -y 1> /dev/null; then
-                bail 1 "Failed to install the package: '${pkg}'"
+                bail 1 "Failed to install the '${pkg}' package"
             else
-                echo "Package Installation: SUCCESS"
+                echo "'${pkg}' package installation is SUCCESSFUL"
             fi
         else
             echo "Package '${pkg}' Found"
