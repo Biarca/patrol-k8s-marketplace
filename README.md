@@ -47,8 +47,8 @@ Follow the below instructions for installing GCP assets using script.
 **Note:** Assumption is the Patrol installer project & Monitoring project are different.
 ### 3.1 Creating Service Account
 Create a Service account in the installer project and assign the below mentioned roles.
-  - **Installer Project** - Add Project Owner role for Installer Project service account
-  - **Monitoring Project** - Add Security Admin role for Installer Project service account
+  - Add 'Project Owner' role of the Installer Project
+  - Add 'Security Admin' role of the Monitoring Project
 
 **Note:** If the installer project and monitoring project are same, then provide Owner role of the project to Service account.
 
