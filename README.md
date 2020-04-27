@@ -3,7 +3,7 @@
 
 Patrol is a cloud security and compliance adherence, monitoring and remediation solution built for Google Cloud Platform (GCP) projects.
 
-Installation of Patrol in GCP Marketplace needs some assets (listed below) to be pre-created in a Project.
+Installation of Patrol App in GCP Marketplace needs some assets (listed below) to be pre-created in a Project.
 - Service accounts - 5
 - Firewall Rules - 1
 - Buckets - 2
@@ -29,7 +29,7 @@ The below packages are needed on the installer machine.
 
 The pre-requisite packages can be installed  on the installer machine using the script **pre-req-installer.sh**, which is available in the [patrol-k8s-marketplace](https://github.com/Biarca/patrol-k8s-marketplace) repository.
 
-In the installer machine, create a folder (say Patrol-installer) and navigate to that folder. Install the 'git' package in the machine if not already installed using the below command:
+In the installer machine, create a folder (say patrol-installer) and navigate to that folder. If already not installed, install the 'git' package in the installer machine using the below command:
 ````
 $ sudo apt-get install -y git
 ````
@@ -43,20 +43,20 @@ $ cd patrol-k8s-marketplace/
 $ sudo bash pre-req-installer.sh
 ````
 # 3. Steps to Install GCP Assets using Script
-Follow the below instructions for installing GCP assets using script.
+One GCP project is needed in which all the assets required for installing Biarca Patrol app are created. This project is referred to as Installer project. Though Patrol can monitor the installer project itself, ideally Monitoring Projects are different. The GCP project(s) that needs to be continuously monitored for security misconfigurations are referred to as Monitoring projects.
 
-**Note:** Assumption is the Patrol installer project & Monitoring project are different.
+Follow the below instructions for installing GCP assets on installer project using script.
 
 ### 3.1 Creating Service Account
 Create a Service account in the installer project and assign the below mentioned roles.
-  - Add 'Project Owner' role of the Installer Project
-  - Add 'Security Admin' role of the Monitoring Project
+  - 'Owner' role of the Installer Project
+  - 'Security Admin' role of the Monitoring Project
 
-**Note:** If the installer project and monitoring project are same, then provide Owner role of the project to Service account.
+**Note:** If the installer project and monitoring project are the same, then just provide Owner role of the installer project to Service account.
 
 In the GCP Console, select Monitoring project and navigate to **IAM & Admin >  Click on "Add"**. Under “New members” provide the Installer project service account and select “Security Admin” as role and click on “Save”.
 
-Download the installer project service account key in JSON format and copy them to the ````<Path-To-Patrol-installer>/patrol-k8s-marketplace```` directory in the installer machine. 
+Download the installer project service account key in JSON format and copy it to the ````<Path-To-patrol-installer>/patrol-k8s-marketplace```` directory in the installer machine. 
 ### 3.2 Creating External Static Address and DNS Record
 For accessing Biarca Patrol UI using an FQDN, perform the below steps in GCP.
 #### 3.2.1 Create External Static IP
@@ -71,34 +71,45 @@ Make sure to provide values as mentioned below and click on the Reserve button.
 **Note:** Make a note of the External Static IP address.
 #### 3.2.2 Create a DNS Record for Reserved External Static IP
 Create a public domain name (or subdomain) and update its  **'A'** record with reserved static IP. Follow your DNS provider instructions to know more about managing DNS records.
+#### 3.2.3 Create Sendgrid API Key
+Patrol needs an SMTP server to send email notifications after each scan is performed. For the same Patrol uses SendGrid, which is a cloud-based SMTP provider that allows you to send email without having to maintain email servers.
+
+You can create a free SendGrid API key by creatng an account at https://signup.sendgrid.com/. Once an account is created and basic user inormation is provided, an API key needs to be created. Use the instructions provided here (https://sendgrid.com/docs/ui/account-and-settings/api-keys/#managing-api-keys) to create an API key.
+
+Make a note of the API key.
+
+Note:- As part of the registration process, an email is sent for confirmation. Make sure that you complete the confirmation process.
+
+#### 3.2.4 Create a Slack Webhook URL
+If you choose to get notifications on slack also, if already not available, create a slack channel and a webhook URL for the same.  The webhook URL may need to be provided during installation.
+
 ### 3.3 Updating Configuration File
-Navigate to the terraform folder.
+In the installer machine, navigate to the terraform folder and in the installer_envs file, update the below list of parameters with user specific info.
 ````
-$ cd <Path to Patrol-installer>/patrol-k8s-marketplace/terraform
+$ cd <Path to patrol-installer>/patrol-k8s-marketplace/terraform
 ````
 Below is the list of parameters in **installer_envs** file, which needs to be updated with user specific info, before continuing with the installation.
-- **RANDOM_ID**=<#4 character alphanumeric value. All the resources created as part of installation setup will have this suffix. Example:- 1a1b >
+- **RANDOM_ID**=<#Provide 4 character alphanumeric value. All the resources created as part of installation setup will have this suffix. Example:- 1a1b >
 - **PATROL_KEYFILE**=<#Full path of the service account key file created in installer project>
-- **PATROL_PROJECTID**=<#Installer Project ID>
-- **MONITOR_PROJECTID**=<#Monitor Resource ID>
-- **REGION**=<#Region name in which the Installer Project assets (Compute and CloudSQL) will be created. Example:- us-central1>
+- **PATROL_PROJECTID**=<#GCP project ID of Installer Project>
+- **MONITOR_PROJECTID**=<#GCP project ID of Monitoring Project. If the installer project and monitoring project are the same, then provide the installer project ID here>
+- **REGION**=<#Region name in which the Installer Project assets (GKE and CloudSQL) will be created. Example:- us-central1>
 - **ZONE**=<#Zone name in which the Installer Project assets will be created. Example:- us-central1-c>
-- **NETWORK_NAME**=<#Network name on which the assets will be created. CAN BE default ALSO>
-- **PATROL_DOMAIN_NAME**=<#Domain name reserved to access Biarca Patrol dashboard>
-- **LOADBALACER_IP_NAME**=<# Reserved External Static IP name>
-- **LOADBALACER_IP**=<#Reserved External Static IP>
+- **NETWORK_NAME**=<#Network name on which the assets will be created. Can be **default** network also>
+- **PATROL_DOMAIN_NAME**=<#Domain name reserved (in section 3.2.2) to access Biarca Patrol App>
+- **LOADBALACER_IP_NAME**=<#Reserved External Static IP Name (provided in section 3.2.1)>
+- **LOADBALACER_IP**=<#Reserved External Static IP (provided in section 3.2.1)>
 - **GCP_ORGANIZATION**=<#If the monitoring project is under a GCP organization, provide the domain name of the same. If monitoring project is NOT under any GCP organization, then MANDATORILY provide a value "No organization">
 - **SENDGRID_APIKEY**=<#Create a Sendgrid key, which is used to send forseti notifications and provide the key here.
-- **FORSETI_EMAIL_SENDER**=<#Email ID of Forseti notification Email sender>
-- **FORSTI_EMAIL_RECIPIENT**=<#Email ID of Forseti notification Email recipient>
+- **FORSETI_EMAIL_SENDER**=<#Email ID for sending Patrol notifications>
+- **FORSTI_EMAIL_RECIPIENT**=<#Recipient Email ID for Patrol notifications>
 - **GSUITE_SUPER_ADMIN_EMAIL**=<#Email ID of GSUITE SUPER ADMIN>
-- **SLACK_WEBHOOK_URL**=<#Slack webhook URL to notify forseti violations and event changes in monitoring resources>
+- **SLACK_WEBHOOK_URL**=<#Slack webhook URL to notify violations and any changes to assets in monitoring projects>
 - **SCHEDULER_REGION**=<#Region in which cloud scheduler will be created for scheduling forseti scans>
-- **PATROL_STATS_TIME**=<#Time frame in minutes to update Biarca Patrol stats info. PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15. Example:- 15>
+- **PATROL_STATS_TIME**=<#Frequency in minutes for updating Biarca Patrol statictics in Patrol Dashboard. PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15. Example:- 15>
 
-**Note:** If Installer Project & Monitoring project are same, provide the same values for  ***PATROL_PROJECTID*** & ***MONITOR_PROJECTID***.
 ### 3.4 Creating Patrol Specific GCP Resources
-Navigate to the path `<Path to Patrol-installer>/patrol-k8s-marketplace/terraform` and execute the below command to install the required GCP resources in the installer project.
+Navigate to the path `<Path to patrol-installer>/patrol-k8s-marketplace/terraform` and execute the below command to install the required GCP resources in the installer project.
 ````
 $ bash installer.sh
 ````
@@ -114,11 +125,13 @@ There are few manual steps which needs to be done post successful installation o
 To control who can access the Biarca Patrol UI, perform the below steps and configure IAP.
 In the GCP Console, navigate to Security > Identity-Aware Proxy and Follow the below steps:
 
-**Note:** If IAP is already not enabled, Enable it. Click on CONFIGURE CONSENT SCREEN and select "Internal" option. Click on 'Next' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.
-
-- Click on **HTTPS RESOURCES** tab and Enable the toggle button beside the entry **patrol-webserver-<RANDOM_ID>** to enable IAP for UI service. A pop up window is displayed.
-- Select the Checkbox  and click on**Turn ON**
-- Select the checkbox of the **patrol-webserver-<RANDOM_ID>** (created as part of the above step). A panel is displayed on the right side.
+    Note:
+    1. If Patrol is being installed with organizational account and if IAP is disabled, then Enable it now. Click on CONFIGURE CONSENT SCREEN and select "Internal" option. Click on 'Next' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.
+    
+    2. If Patrol is being installed with personal GCP account and if IAP is disabled, then Enable it now. Click on CONFIGURE CONSENT SCREEN and select "External" option. Click on 'Next' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.
+- Click on **HTTPS RESOURCES** tab and Enable the toggle button beside the entry **patrol-webserver-<RANDOM_ID>** to enable IAP for UI. A pop up appears.
+- Select the Checkbox and click on **Turn ON**
+- Select the checkbox of the **patrol-webserver-<RANDOM_ID>**. A panel is displayed on the right side.
 - Click on the **ADD MEMBER** button.
 - In the New members box, provide an **email id** and from the Roles drop down, select **Cloud IAP -> IAP-Secured Web App User**.
 
@@ -153,9 +166,9 @@ Execute the below Steps:
 
 **Note:** Post-installation if you have deleted the 'patrol-k8s-marketplace' directory in the installer machine, execute the commands from `section [2.2] & section [3.1]` above.
 
-5. Navigate to `<Path to Patrol-installer>/patrol-k8s-marketplace/app-data`.
+5. Navigate to `<Path to patrol-installer>/patrol-k8s-marketplace/app-data`.
 ````
-$ cd <Path to Patrol-installer>/patrol-k8s-marketplace/app-data/
+$ cd <Path to patrol-installer>/patrol-k8s-marketplace/app-data/
 ````
 6. If the **'uninstall.envs'** file is not available, then create a new file with name **'uninstall.envs'** and provide the below details and Save it.
     - **PROJECT_ID**=<#Project-ID of the Installer Project>
@@ -168,7 +181,7 @@ $ cd <Path to Patrol-installer>/patrol-k8s-marketplace/app-data/
 
 **Note:** If the file 'uninstall.envs' already exists, then make sure all the values in the file are valid.
 
-7. Navigate to the `<Path to Patrol-installer>/patrol-k8s-marketplace/terraform/` directory and execute the below command.
+7. Navigate to the `<Path to patrol-installer>/patrol-k8s-marketplace/terraform/` directory and execute the below command.
 ````
 $ bash uninstall.sh
 ````
@@ -177,4 +190,5 @@ As part of the script execution, when prompted for a value provide 'yes'.
 8. Execute section [4.2] to remove the Owner role & Security Admin role attached to the service accounts.
 
 **Note** :- The above script would not delete 'External Static IP' and 'DNS record' which are created in section [3.2] above. These need to be removed manually.
+
 
