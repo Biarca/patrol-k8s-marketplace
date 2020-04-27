@@ -95,7 +95,7 @@ Below is the list of parameters in **installer_envs** file, which needs to be up
 - **MONITOR_PROJECTID**=<#GCP project ID of Monitoring Project. If the installer project and monitoring project are the same, then provide the installer project ID here>
 - **REGION**=<#Region name in which the Installer Project assets (GKE and CloudSQL) will be created. Example:- us-central1>
 - **ZONE**=<#Zone name in which the Installer Project assets will be created. Example:- us-central1-c>
-- **NETWORK_NAME**=<#Network name on which the assets will be created. Can be **default** network also>
+- **NETWORK_NAME**=<#Provide a Network which is created with **Automatic** Subnet creation mode. Can be **default** network also>
 - **PATROL_DOMAIN_NAME**=<#Domain name reserved (in section 3.2.2) to access Biarca Patrol App>
 - **LOADBALACER_IP_NAME**=<#Reserved External Static IP Name (provided in section 3.2.1)>
 - **LOADBALACER_IP**=<#Reserved External Static IP (provided in section 3.2.1)>
@@ -109,7 +109,7 @@ Below is the list of parameters in **installer_envs** file, which needs to be up
 - **PATROL_STATS_TIME**=<#Frequency in minutes for updating Biarca Patrol statictics in Patrol Dashboard. PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15. Example:- 15>
 
 ### 3.4 Creating Patrol Specific GCP Resources
-Navigate to the path `<Path to patrol-installer>/patrol-k8s-marketplace/terraform` and execute the below command to install the required GCP resources in the installer project.
+Navigate to the path `<Path to patrol-installer>/patrol-k8s-marketplace/terraform` a nd execute the below command to install the required GCP resources in the installer project.
 ````
 $ bash installer.sh
 ````
@@ -126,10 +126,10 @@ To control who can access the Biarca Patrol UI, perform the below steps and conf
 In the GCP Console, navigate to Security > Identity-Aware Proxy and Follow the below steps:
 
     Note:
-    1. If Patrol is being installed with organizational account and if IAP is disabled, then Enable it now. Click on CONFIGURE CONSENT SCREEN and select "Internal" option. Click on 'Next' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.
+    1. If Patrol is being installed with organizational account and if IAP is disabled, then Enable it now. Click on CONFIGURE CONSENT SCREEN and select "Internal" option. Click on 'Create' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.
     
-    2. If Patrol is being installed with personal GCP account and if IAP is disabled, then Enable it now. Click on CONFIGURE CONSENT SCREEN and select "External" option. Click on 'Next' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.
-- Click on **HTTPS RESOURCES** tab and Enable the toggle button beside the entry **patrol-webserver-<RANDOM_ID>** to enable IAP for UI. A pop up appears.
+    2. If Patrol is being installed with personal GCP account and if IAP is disabled, then Enable it now. Click on CONFIGURE CONSENT SCREEN and select "External" option. Click on Create' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.
+- Click on **HTTPS RESOURCES** tab and enable the toggle button beside the entry **patrol-webserver-<RANDOM_ID>** to enable IAP for UI. A pop up appears.
 - Select the Checkbox and click on **Turn ON**
 - Select the checkbox of the **patrol-webserver-<RANDOM_ID>**. A panel is displayed on the right side.
 - Click on the **ADD MEMBER** button.
