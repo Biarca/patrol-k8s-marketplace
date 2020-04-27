@@ -1,61 +1,54 @@
 ### Installer related envs
 
-# All the resources created as part of installation setup will have this suffix
+# Provide 4 character alphanumeric value. All the resources created as part of installation setup will have this suffix.
 RANDOM_ID=<4-digit-alphanumeric-string> # ex: 1a1b
 
-# File path of the key file which has owner role for Installer project
-# and IAM Security Admin role for monitoring project
+# Full path of the service account key file created in installer project
 PATROL_KEYFILE=<PATROL_KEYFILE>
 
-# Installer Project ID 
+# GCP project ID of Installer Project
 PATROL_PROJECTID=<PATROL_PROJECTID>
 
-# Monitor Resource ID
+# GCP project ID of Monitoring Project. If the installer project and monitoring project are the same, then provide the installer project ID here
 MONITOR_PROJECTID=<MONITOR_PROJECTID>
 
-# Region name on which the assets(Compute and CloudSQL) will be created
-REGION=<REGION>
-
-# Zone name on which the assets will be created
-ZONE=<ZONE>
-
-# Network name on which the assets will be created
+# Provide a Network which is created with **Automatic** Subnet creation mode. Can be **default** network also
 NETWORK_NAME=<NETWORK_NAME>
 
-# Domain name reserved to access Biarca patrol dashboard
+# Domain name reserved (in section 3.2.2) to access Biarca Patrol App
 PATROL_DOMAIN_NAME=<PATROL_DOMAIN_NAME>
 
-# Reserved static IP name and address for load balancer to access Biarca patrol dashboard
+# Reserved External Static IP Name (provided in section 3.2.1)
 LOADBALACER_IP_NAME=<STATIC_IP_NAME>
+
+# Reserved External Static IP (provided in section 3.2.1)
 LOADBALACER_IP=<STATIC_IP_ADDRESS>
 
 
-### Forseti related envs
+### Patrol related envs
 
-# GCP organization domain name
-GCP_ORGANIZATION=<GCP_ORGANIZATION> # "No organization" also acceptable
+# If the monitoring project is under a GCP organization, provide the domain name of the same.
+# If monitoring project is NOT under any GCP organization, then MANDATORILY provide a value "No organization"
+GCP_ORGANIZATION=<GCP_ORGANIZATION>
 
-# Send grid API key used to send forseti notifications
+# Create a Sendgrid key, which is used to send patrol notifications and provide the key here
 SENDGRID_APIKEY=<SENDGRID_APIKEY>
 
-# Email ID of Forseti notification Email sender
-FORSETI_EMAIL_SENDER=<FORSETI_EMAIL_SENDER> # ex:forseti-alert@example.com
+# Email ID for sending Patrol notifications
+PATROL_EMAIL_SENDER=<PATROL_EMAIL_SENDER> # ex:patrol-alert@example.com
 
-# Email ID of Forseti notification Email recipient
-FORSTI_EMAIL_RECIPIENT=<FORSTI_EMAIL_RECIPIENT>
+# Recipient Email ID for Patrol notifications
+PATROL_EMAIL_RECIPIENT=<PATROL_EMAIL_RECIPIENT>
 
-# Email ID of GSUITE SUPER ADMIN
-GSUITE_SUPER_ADMIN_EMAIL=<GSUITE_SUPER_ADMIN_EMAIL>
+# Slack webhook URL to notify violations and any changes to assets in monitoring projects.
+# This is an **optional** parameter. Comment (using '#') this parameter to ignore
 
-# Slack webhook URL to notify forseti violations and event changes in monitoring resources
 SLACK_WEBHOOK_URL=<SLACK_WEBHOOK_URL> # Ref: https://api.slack.com/incoming-webhooks
 
 
 ### Application related envs
 
-# Region on which cloud scheduler will be created for scheduling forseti scans
-SCHEDULER_REGION=<SCHEDULER_REGION>
-
-# Time frame to update biarca patrol stats info in minutes
-PATROL_STATS_TIME=<PATROL_STATS_TIME> # Should be greater than or equal to 15 ex:15
+# Frequency in minutes for updating Biarca Patrol statictics in Patrol Dashboard.
+# PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15.
+PATROL_STATS_TIME=<PATROL_STATS_TIME> # ex: 15
 

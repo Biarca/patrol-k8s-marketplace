@@ -10,7 +10,8 @@ Installation of Patrol App in GCP Marketplace needs some assets (listed below) t
 - Pubsub topics - 3
 - Subscription - 3
 - 3-Node Kubernetes Cluster -1 [“n1-standard-2”]
-- MySQL instance - 1 [2 databases].
+- MySQL instance - 1 [2 databases]
+- App Engine - 1
 
 Follow the below instructions for installing the above mentioned assets (using an automated script) and also Patrol application in GCP Marketplace.
 ## 2. Setup an Installer Machine
@@ -43,7 +44,7 @@ $ cd patrol-k8s-marketplace/
 $ sudo bash pre-req-installer.sh
 ````
 # 3. Steps to Install GCP Assets using Script
-One GCP project is needed in which all the assets required for installing Biarca Patrol app are created. This project is referred to as Installer project. Though Patrol can monitor the installer project itself, ideally Monitoring Projects are different. The GCP project(s) that needs to be continuously monitored for security misconfigurations are referred to as Monitoring projects.
+A new GCP project is needed in which all the assets required for installing Biarca Patrol app are created. This project is referred to as Installer project. Though Patrol can monitor the installer project itself, ideally Monitoring Projects are different. The GCP project(s) that needs to be continuously monitored for security misconfigurations are referred to as Monitoring projects.
 
 Follow the below instructions for installing GCP assets on installer project using script.
 
@@ -93,19 +94,15 @@ Below is the list of parameters in **installer_envs** file, which needs to be up
 - **PATROL_KEYFILE**=<#Full path of the service account key file created in installer project>
 - **PATROL_PROJECTID**=<#GCP project ID of Installer Project>
 - **MONITOR_PROJECTID**=<#GCP project ID of Monitoring Project. If the installer project and monitoring project are the same, then provide the installer project ID here>
-- **REGION**=<#Region name in which the Installer Project assets (GKE and CloudSQL) will be created. Example:- us-central1>
-- **ZONE**=<#Zone name in which the Installer Project assets will be created. Example:- us-central1-c>
 - **NETWORK_NAME**=<#Provide a Network which is created with **Automatic** Subnet creation mode. Can be **default** network also>
 - **PATROL_DOMAIN_NAME**=<#Domain name reserved (in section 3.2.2) to access Biarca Patrol App>
 - **LOADBALACER_IP_NAME**=<#Reserved External Static IP Name (provided in section 3.2.1)>
 - **LOADBALACER_IP**=<#Reserved External Static IP (provided in section 3.2.1)>
 - **GCP_ORGANIZATION**=<#If the monitoring project is under a GCP organization, provide the domain name of the same. If monitoring project is NOT under any GCP organization, then MANDATORILY provide a value "No organization">
-- **SENDGRID_APIKEY**=<#Create a Sendgrid key, which is used to send forseti notifications and provide the key here.
-- **FORSETI_EMAIL_SENDER**=<#Email ID for sending Patrol notifications>
-- **FORSTI_EMAIL_RECIPIENT**=<#Recipient Email ID for Patrol notifications>
-- **GSUITE_SUPER_ADMIN_EMAIL**=<#Email ID of GSUITE SUPER ADMIN>
-- **SLACK_WEBHOOK_URL**=<#Slack webhook URL to notify violations and any changes to assets in monitoring projects>
-- **SCHEDULER_REGION**=<#Region in which cloud scheduler will be created for scheduling forseti scans>
+- **SENDGRID_APIKEY**=<#Create a Sendgrid key, which is used to send patrol notifications and provide the key here>
+- **PATROL_EMAIL_SENDER**=<#Email ID for sending Patrol notifications>
+- **PATROL_EMAIL_RECIPIENT**=<#Recipient Email ID for Patrol notifications>
+- **SLACK_WEBHOOK_URL**=<#Slack webhook URL to notify violations and any changes to assets in monitoring projects. This is an **optional** parameter. Comment (using '#') this parameter to ignore>
 - **PATROL_STATS_TIME**=<#Frequency in minutes for updating Biarca Patrol statictics in Patrol Dashboard. PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15. Example:- 15>
 
 ### 3.4 Creating Patrol Specific GCP Resources
@@ -150,8 +147,8 @@ To uninstall the Patrol app from the marketplace, follow the below steps. All th
 
 Execute the below Steps:
 1. From **Biarca Patrol UI -> Dashboard**, delete all the project(s).
-2. From **Biarca Patrol UI -> Resource Monitoring**, delete all the project(s) which were added post installation.
-3. From GCP Console delete “IAP Secrets”. If the installer project is used for multiple projects then it would be difficult to find out the appropriate IAP secret as a unique name will be created for secrets at the time of installation.
+2. From **Biarca Patrol UI -> Manage Projects**, delete all the project(s) which were added post installation.
+3. From GCP Console delete “IAP Secrets”. If the installer project is used for multiple projects then it would be difficult to find out the appropriate IAP secret, as a unique name will be created for secrets at the time of installation.
 
    3.a In order to identify the IAP secret for the specific project follow the below steps:
    - Navigate to "**Menu > IAM & Admin > Identity-Aware Proxy**”.

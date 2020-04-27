@@ -15,7 +15,7 @@ variable "patrol_project_owner_serviceaccount_key_file_path" {
 
 # Default region used in provider for the project where biarca patrol will be installed
 variable "patrol_project_default_region" {
-  default="REGION"
+  default="us-central1"
 }
 
 # Id of the project which biarca patrol will be monitoring
@@ -30,7 +30,7 @@ default = "PATROL_KEYFILE"
 
 # Default region used in provider for the project where biarca patrol will be monitoring
 variable "forseti_project_default_region" {
-  default="REGION"
+  default="us-central1"
 }
 
 # Unique id of the enforcer service account
@@ -141,7 +141,7 @@ variable "patrol_compute_instance_machine_type" {
 
 # Instance zone
 variable "patrol_compute_instance_zone" {
-  default = "ZONE"
+  default = "us-central1-c"
 }
 
 # Tags for instance
@@ -189,7 +189,7 @@ variable "patrol_compute_instance_group_ui_namedport_port" {
 
 # Instance group zone which must be same as instance zone
 variable "patrol_compute_instance_group_zone" {
-  default = "ZONE"
+  default = "us-central1-c"
 }
 
 # Scanner bucket name
@@ -236,7 +236,7 @@ variable "cloudsql_private_ip_name" {
 
 # Cloudsql instance region
 variable "cloud_sql_instance_region" {
-  default = "REGION"
+  default = "us-central1"
 }
 
 # Cloudsql instance type
@@ -421,7 +421,7 @@ variable "PATROL_APISERVER_SINK_NAME" {
 
 # Api server region
 variable "patrol_apiserver_region" {
-  default = "REGION"
+  default = "us-central1"
 }
 
 # Enable or disable cai
@@ -436,12 +436,12 @@ variable "PATROL_APISERVER_SENDGRID_API_KEY"{
 
 # Sender email id
 variable "PATROL_APISERVER_EMAIL_SENDER" {
-  default = "FORSETI_EMAIL_SENDER"
+  default = "PATROL_EMAIL_SENDER"
 }
 
 # Reciever email id
 variable "PATROL_APISERVER_EMAIL_RECIPIENT" {
-  default = "FORSTI_EMAIL_RECIPIENT"
+  default = "PATROL_EMAIL_RECIPIENT"
 }
 
 # Gsuite admin email id
@@ -603,7 +603,7 @@ variable "slack_webhook_url"{
 }
 
 variable "patrol_appengine_location_id" {
-  default = "SCHEDULER_REGION"
+  default = "us-central"
 }
 
 # Path where the creted serviceaccounts key files will be saved

@@ -109,7 +109,7 @@ function terraform_apply(){
         bail 1 "Unable to execute terraform apply"
     fi
     print_debug "################################"
-    print_debug "Successfully created the resources required for Forseti with terraform"
+    print_debug "Successfully created the GCP assets required for Patrol app installation"
 }
 
 
