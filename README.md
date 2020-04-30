@@ -13,12 +13,15 @@ Installation of Patrol App in GCP Marketplace needs some assets (listed below) t
 - MySQL instance - 1 [2 databases]
 - App Engine - 1
 
-Follow the below instructions for installing the above mentioned assets (using an automated script) and also Patrol application in GCP Marketplace.
-## 2. Setup an Installer Machine
-Follow the below instructions for setting an installer machine, from which script to create GCP assets can be executed.
-### 2.1 Installer Machine
-A Ubuntu 18.04 machine (bare metal / VM) is needed for executing steps to create required GCP Assets.
-### 2.2 Prerequisites
+### 1.1 Installer Machine
+An Ubuntu 18.04 machine (VM/Baremetal/GCE) is needed to create the above mentioned assets using an automated script. This machine will be referred to as Installer machine.
+### 1.2 Installer Project
+A new GCP project is needed in which all the assets required for installing Patrol app are created. This project is referred to as Installer project. 
+### 1.3 Monitoring Project
+Though Patrol can monitor the installer project itself, ideally Monitoring Projects are different. The GCP project(s) that need to be continuously monitored for security misconfigurations are referred to as Monitoring projects.
+## 2. Configuring an Installer Machine
+Follow the below instructions for setting up an installer machine, from which script to create GCP assets can be executed.
+### 2.1 Prerequisites
 The below packages are needed on the installer machine.
 - zip
 - wget
@@ -28,6 +31,7 @@ The below packages are needed on the installer machine.
 - curl
 - JSON processor (jq)
 
+### 2.2 Script to install Prerequisites
 The pre-requisite packages can be installed  on the installer machine using the script **pre-req-installer.sh**, which is available in the [patrol-k8s-marketplace](https://github.com/Biarca/patrol-k8s-marketplace) repository.
 
 In the installer machine, create a folder (say patrol-installer) and navigate to that folder. If already not installed, install the 'git' package in the installer machine using the below command:
@@ -44,8 +48,6 @@ $ cd patrol-k8s-marketplace/
 $ sudo bash pre-req-installer.sh
 ````
 # 3. Steps to Install GCP Assets using Script
-A new GCP project is needed in which all the assets required for installing Biarca Patrol app are created. This project is referred to as Installer project. Though Patrol can monitor the installer project itself, ideally Monitoring Projects are different. The GCP project(s) that needs to be continuously monitored for security misconfigurations are referred to as Monitoring projects.
-
 Follow the below instructions for installing GCP assets on installer project using script.
 
 ### 3.1 Creating Service Account
@@ -55,13 +57,14 @@ Create a Service account in the installer project and assign the below mentioned
 
 **Note:** If the installer project and monitoring project are the same, then just provide Owner role of the installer project to Service account.
 
-In the GCP Console, select Monitoring project and navigate to **IAM & Admin >  Click on "Add"**. Under “New members” provide the Installer project service account and select “Security Admin” as role and click on “Save”.
+In the GCP Console, select Monitoring project and navigate to **IAM & Admin > IAM** and Click on "Add". Under “New members” provide the Installer project service account and select “Security Admin” as role and click on “Save”.
+In the Installer project, navigate to **IAM & Admin > Service Accounts**, for the desired service account, click on the 3-dots under the Actions column and click on "Create Key". Select key type as "JSON" and click on "CREATE".
 
 Download the installer project service account key in JSON format and copy it to the ````<Path-To-patrol-installer>/patrol-k8s-marketplace```` directory in the installer machine. 
 ### 3.2 Creating External Static Address and DNS Record
 For accessing Biarca Patrol UI using an FQDN, perform the below steps in GCP.
 #### 3.2.1 Create External Static IP
-In GCP console, navigate to Menu -> NETWORKING -> VPC network -> External IP addresses and click on RESERVE STATIC ADDRESSES.
+In the Installer project, navigate to **Menu -> NETWORKING -> VPC network -> External IP addresses** and click on RESERVE STATIC ADDRESSES.
 Make sure to provide values as mentioned below and click on the Reserve button.
 | **Name** | `<Any user desired name>` |
 | :---        |    :----:   |
@@ -69,20 +72,33 @@ Make sure to provide values as mentioned below and click on the Reserve button.
 | **IP Version** | `IPv4` |
 | **Type** | `Global` |
 
-**Note:** Make a note of the External Static IP address.
+**Note:** Make a note of the both External Static IP Name and IP address.
 #### 3.2.2 Create a DNS Record for Reserved External Static IP
 Create a public domain name (or subdomain) and update its  **'A'** record with reserved static IP. Follow your DNS provider instructions to know more about managing DNS records.
 #### 3.2.3 Create Sendgrid API Key
-Patrol needs an SMTP server to send email notifications after each scan is performed. For the same Patrol uses SendGrid, which is a cloud-based SMTP provider that allows you to send email without having to maintain email servers.
+Patrol needs an SMTP server to send email notifications after each scan is performed. To achieve this, Patrol uses SendGrid (which is a cloud-based SMTP provider) that allows transmission of emails, without having to maintain email servers.
 
-You can create a free SendGrid API key by creatng an account at https://signup.sendgrid.com/. Once an account is created and basic user inormation is provided, an API key needs to be created. Use the instructions provided here (https://sendgrid.com/docs/ui/account-and-settings/api-keys/#managing-api-keys) to create an API key.
+You can create a free SendGrid API key by creating an account at [Send Grid](https://signup.sendgrid.com/). Once an account is created and basic user information is provided, an API key needs to be created. For creating an API key follow the below instructions:
 
-Make a note of the API key.
+- Navigate to Settings on the left navigation bar, and then select API Keys.
+- Click Create API Key.
+- Give your API key a name.
+- Select Full Access.
+- Click Create & View.
+- Copy your API key somewhere. **Please note that this key is displayed only once**.
 
 Note:- As part of the registration process, an email is sent for confirmation. Make sure that you complete the confirmation process.
 
 #### 3.2.4 Create a Slack Webhook URL
-If you choose to get notifications on slack also, if already not available, create a slack channel and a webhook URL for the same.  The webhook URL may need to be provided during installation.
+If you choose to get notifications on slack also, if already not available, create a slack channel and a webhook URL for the same.  The webhook URL may need to be provided during installation. 
+
+Follow the below steps to create a webhook URL
+- Create a channel in one of your slack workspace.
+- Go to the [slack app page](https://api.slack.com/apps).
+- Click on **Create New App**  → Enter the name for the App and Workspace to deploy it.
+- Click on **Incoming Webhooks** under the **Features** of created App and enable **Activate Incoming Webhooks**.
+- Then, Click on **Add New Webhook to Workspace** and enter the **Channel Name** you want to post the notifications from Patrol and click on **Authorize** button.
+- In the **Incoming Webhooks** page of the created app, scroll down and copy the "**Webhook URL**".
 
 ### 3.3 Updating Configuration File
 In the installer machine, navigate to the terraform folder and in the installer_envs file, update the below list of parameters with user specific info.
