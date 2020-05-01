@@ -130,8 +130,8 @@ As part of the script execution, when prompted for a value provide 'yes'.
 
 **Note:** Post successful completion of the script, few values will be displayed at the end of the script. Those values MUST be provided in the Marketplace UI during the Patrol app installation
 ### 3.5 Patrol Installation from GCP Marketplace
-In the GCP Console, select Installer project and then from the navigation menu click on  Marketplace and search for "Patrol". 
-Follow the on-screen instructions and provide the required input values that were used for GCP assets creation as part of section [3.3] to populate the form.
+Go to [GCP Console](https://console.cloud.google.com/marketplace/details/patrol-public/patrol), select Installer project and click on "Configure" button. 
+Follow the on-screen instructions and provide the required input values that were used for GCP assets creation as part of section [3.3] to populate the form. Click on "deploy" button.
 ## 4. Post Installation Steps
 There are few manual steps which needs to be done post successful installation of Patrol application from marketplace.
 ### 4.1 Enabling IAP
@@ -141,14 +141,15 @@ In the GCP Console, navigate to Security > Identity-Aware Proxy and Follow the b
     Note:
     1. If Patrol is being installed with organizational account and if IAP is disabled, then Enable it now. Click on CONFIGURE CONSENT SCREEN and select "Internal" option. Click on 'Create' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.
     
-    2. If Patrol is being installed with personal GCP account and if IAP is disabled, then Enable it now. Click on CONFIGURE CONSENT SCREEN and select "External" option. Click on Create' button. Provide an application name (can be anything) and click on 'Save' Button. Navigate back to Identity-Aware Proxy page.
+    2. If Patrol is being installed with personal GCP account and if IAP is disabled, then Enable it now. Click on CONFIGURE CONSENT SCREEN and select "External" option. Click on Create' button. Provide an application name (can be anything) and click on 'Save' Button.
+- Navigate back to Identity-Aware Proxy page.
 - Click on **HTTPS RESOURCES** tab and enable the toggle button beside the entry **patrol-webserver-<RANDOM_ID>** to enable IAP for UI. A pop up appears.
 - Select the Checkbox and click on **Turn ON**
 - Select the checkbox of the **patrol-webserver-<RANDOM_ID>**. A panel is displayed on the right side.
 - Click on the **ADD MEMBER** button.
 - In the New members box, provide an **email id** and from the Roles drop down, select **Cloud IAP -> IAP-Secured Web App User**.
+**Note:** It takes around 5 minutes for the DNS record and IAP to get updated. Also you can ignore the "**kube-system/default-http-backend**" service.
 
-**Note:** It takes around 5 minutes for the DNS record and IAP to get updated.
 ### 4.2 Update Service Accounts
 Post successful installation of Biarca Patrol, in the installer project execute the below to remove the Owner role & Security Admin role attached to the service accounts.
 ````
@@ -203,5 +204,3 @@ As part of the script execution, when prompted for a value provide 'yes'.
 8. Execute section [4.2] to remove the Owner role & Security Admin role attached to the service accounts.
 
 **Note** :- The above script would not delete 'External Static IP' and 'DNS record' which are created in section [3.2] above. These need to be removed manually.
-
-
