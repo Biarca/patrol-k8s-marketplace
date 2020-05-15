@@ -17,7 +17,10 @@ if ! gcloud config set project ${PROJECT_ID} &> /dev/null; then
 fi
 
 if ! gsutil -m cp -r gs://${SCANNER_BUCKET}/tform/* ./ &> /dev/null; then
-    ERROR "Unable to download the terradorm files"; exit 1
+    DEBUG "Unable to download the terraform files"
+    if ! test -s "terraform.tfstate"; then
+        ERROR "No tfstate file found in local. Unable to terraform destroy"; exit 1
+    fi
 fi
 
 INFO "Fetching the cluster endpoint and auth data of kubernetes cluster"

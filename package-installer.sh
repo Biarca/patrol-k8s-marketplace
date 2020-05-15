@@ -63,11 +63,10 @@ for pkg in "${pkg_list[@]}"; do
         else
             DEBUG "Package Found: Checking version .."
             tf_ver=$(terraform -v | head -n 1 | tr "v" " " | awk '{print $2}')
-            if dpkg --compare-versions "${tf_ver}" gt 0.12.2; then
+            if dpkg --compare-versions "${tf_ver}" eq 0.12.3; then
                 INFO "'${pkg}' package Version is Supported"
             else
-                DEBUG "'${pkg}' package Version is not supported. Updating to v0.12.3"
-                install_terraform
+                ERROR "'${pkg}' package Version is not supported. Updating to v0.12.3"; exit 1
             fi
         fi
     elif [[ "${pkg}" == "gcloud" ]]; then

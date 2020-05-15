@@ -15,7 +15,7 @@ function check_prerequsites() {
     INFO "################################"
     INFO "Checking for required packages ..."
     sleep 2
-    if sudo bash ../pre-req-installer.sh; then
+    if sudo bash ../package-installer.sh; then
         INFO "Pre-Requisites check completed"
     else
         ERROR "Failed the pre-requisite checks"; exit 1
