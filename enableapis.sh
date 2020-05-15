@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+. ../terraform/b-log.sh
+LOG_LEVEL_ALL
+B_LOG --file patrol.log --file-prefix-enable --file-suffix-enable
+
+scheduler_region="${1}"
 installer_key_file=PATROL_KEYFILE
 installer_project_id=PATROL_PROJECTID
-FORSETI_ENABLE_APIS='''
+FS_ENABLE_APIS='''
 cloudresourcemanager.googleapis.com
 serviceusage.googleapis.com
 admin.googleapis.com
@@ -23,45 +28,37 @@ cloudscheduler.googleapis.com
 container.googleapis.com
 '''
 
-
-function print_debug() {
-  builtin echo "Debug: $@"
-}
-
-function print_error() {
-  builtin echo "Error: $@" >&2
-}
-
-function bail() {
-  local EXIT_CODE=$1
-  shift
-  builtin echo "Exiting: $@" >&2
-  exit ${EXIT_CODE}
-}
-
 # Enable Required API's in Installer project
+sudo chown -R $USER ~/.config/gcloud
 if gcloud auth activate-service-account --key-file ${installer_key_file}; then
+  INFO "gcloud config project setting to '${installer_project_id}'"
   if gcloud config set project ${installer_project_id} &> /dev/null; then
-    print_debug "gcloud config project set to '${installer_project_id}'"
-    for api in ${FORSETI_ENABLE_APIS}; do
+    INFO "Enabling all the required APIS..."
+    for api in ${FS_ENABLE_APIS}; do
       if ! gcloud services enable ${api}; then
-        bail 1 "Failed to enable API [${api}]."
+        ERROR "Failed to enable API [${api}]."; exit 1
       fi
     done
+    INFO "All required APIS are enabled"
   else
-    bail 1 "Unable set gcloud project '${installer_project_id}'"
+    ERROR "Unable set gcloud project '${installer_project_id}'"; exit 1
   fi
 else
-  bail 1 "Unable to activate service account with '${installer_key_file}'"
+  ERROR "Unable to activate service account with '${installer_key_file}'"; exit 1
 fi
 
 # Create an app in App Engine in installer project to
 # support creating cloud schedulers for monitoring projects.
+INFO "Creating an appengine application .."
+
 if ! gcloud app describe &> /dev/null; then
-	if ! gcloud app create --region us-central &> /dev/null; then
-		bail 1 "Failed to create app in App Engine"
-	fi
+  if ! gcloud app create --region "${scheduler_region}" &> /dev/null; then
+    ERROR "Failed to create application in App Engine"; exit 1
+  fi
 else
-	print_debug "App already created in App Engine for the "\
-				"project '${installer_project_id}'"
+  location_id=$(gcloud app describe --format=json | jq -r ".locationId" 2> /dev/null)
+  sed -i "/SCHEDULER_REGION=/c\SCHEDULER_REGION=${location_id}" ./installer_envs
+  DEBUG "App already created in App Engine for the "\
+        "project '${installer_project_id}'"
 fi
+INFO "Application creation in App Engine is successful"

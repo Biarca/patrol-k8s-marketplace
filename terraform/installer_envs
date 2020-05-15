@@ -12,6 +12,12 @@ PATROL_PROJECTID=<PATROL_PROJECTID>
 # GCP project ID of Monitoring Project. If the installer project and monitoring project are the same, then provide the installer project ID here
 MONITOR_PROJECTID=<MONITOR_PROJECTID>
 
+#Region name in which the Installer Project assets (GKE and CloudSQL) will be created.
+REGION=<REGION> # Example:- us-central1
+
+# Zone name in which the Installer Project assets will be created.
+ZONE=<ZONE> # Example:- us-central1-c
+
 # Provide a Network which is created with **Automatic** Subnet creation mode. Can be **default** network also
 NETWORK_NAME=<NETWORK_NAME>
 
@@ -47,6 +53,9 @@ SLACK_WEBHOOK_URL=<SLACK_WEBHOOK_URL> # Ref: https://api.slack.com/incoming-webh
 
 
 ### Application related envs
+
+# Region in which cloud scheduler will be created for scheduling Patrol scans
+SCHEDULER_REGION=<SCHEDULER_REGION>
 
 # Frequency in minutes for updating Biarca Patrol statictics in Patrol Dashboard.
 # PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15.

@@ -5,10 +5,10 @@ module "create_enforcer_service_account" {
   service_account_project      = "${var.patrol_projectid}"
 }
 
-module "create_forseti_service_account" {
+module "create_fs_service_account" {
   source                       = "./modules/createserviceaccount"
-  service_account_id           = "${var.forseti_service_account_id}"
-  service_account_display_name = "${var.forseti_service_account_name}"
+  service_account_id           = "${var.fs_service_account_id}"
+  service_account_display_name = "${var.fs_service_account_name}"
   service_account_project      = "${var.patrol_projectid}"
 }
 
@@ -32,9 +32,9 @@ module "create_enforcer_service_account_key" {
   service_account_id = "${module.create_enforcer_service_account.id}"
 }
 
-module "create_forseti_service_account_key" {
+module "create_fs_service_account_key" {
   source             = "./modules/createserviceaccountkey"
-  service_account_id = "${module.create_forseti_service_account.id}"
+  service_account_id = "${module.create_fs_service_account.id}"
 }
 
 module "create_apiserver_service_account_key" {
@@ -53,10 +53,10 @@ module "save_enforcer_service_account_key" {
   path    = "${var.patrol_keys_path}/${var.enforcer_service_account_id}.json"
 }
 
-module "save_forseti_service_account_key" {
+module "save_fs_service_account_key" {
   source  = "./modules/savebase64contenttofile"
-  content = "${module.create_forseti_service_account_key.content}"
-  path    = "${var.patrol_keys_path}/${var.forseti_service_account_id}.json"
+  content = "${module.create_fs_service_account_key.content}"
+  path    = "${var.patrol_keys_path}/${var.fs_service_account_id}.json"
 }
 
 module "save_apiserver_service_account_key" {
@@ -72,12 +72,12 @@ module "save_cloudsql_service_account_key" {
 }
 
 
-module "grant_enforcer_forseti_service_account_roles" {
+module "grant_enforcer_fs_service_account_roles" {
   source = "./modules/grantroletoserviceaccount"
-  roles   = "${var.enforcer_forseti_roles}"
+  roles   = "${var.enforcer_fs_roles}"
   email  = "${module.create_enforcer_service_account.email}"
   providers = {
-    google = "google.forseti"
+    google = "google.fs"
   }
 }
 
@@ -87,19 +87,19 @@ module "grant_enforcer_patrol_service_account_roles" {
   email  = "${module.create_enforcer_service_account.email}"
 }
 
-module "grant_forseti_forseti_service_account_roles" {
+module "grant_fs_fs_service_account_roles" {
   source = "./modules/grantroletoserviceaccount"
-  roles   = "${var.forseti_forseti_roles}"
-  email  = "${module.create_forseti_service_account.email}"
+  roles   = "${var.fs_fs_roles}"
+  email  = "${module.create_fs_service_account.email}"
   providers = {
-    google = "google.forseti"
+    google = "google.fs"
   }
 }
 
-module "grant_forseti_patrol_service_account_roles" {
+module "grant_fs_patrol_service_account_roles" {
   source = "./modules/grantroletoserviceaccount"
-  roles   = "${var.forseti_patrol_roles}"
-  email  = "${module.create_forseti_service_account.email}"
+  roles   = "${var.fs_patrol_roles}"
+  email  = "${module.create_fs_service_account.email}"
 }
 
 module "grant_apiserver_patrol_service_account_roles" {
@@ -108,12 +108,12 @@ module "grant_apiserver_patrol_service_account_roles" {
   email  = "${module.create_apiserver_service_account.email}"
 }
 
-module "grant_apiserver_forseti_service_account_roles" {
+module "grant_apiserver_fs_service_account_roles" {
   source = "./modules/grantroletoserviceaccount"
-  roles   = "${var.apiserver_forseti_roles}"
+  roles   = "${var.apiserver_fs_roles}"
   email  = "${module.create_apiserver_service_account.email}"
   providers = {
-    google = "google.forseti"
+    google = "google.fs"
   }
 }
 
@@ -140,9 +140,9 @@ module "create_patrol_enforcer_pubsub_topic"{
   name = "${var.enforcer_pubsub_topic}"
 }
 
-module "create_patrol_forseti_pubsub_topic"{
+module "create_patrol_fs_pubsub_topic"{
   source = "./modules/createpubsubtopic"
-  name = "${var.forseti_pubsub_topic}"
+  name = "${var.fs_pubsub_topic}"
 }
 
 module "create_patrol_enforcer_subscription"{
@@ -151,10 +151,10 @@ module "create_patrol_enforcer_subscription"{
   topic = "${module.create_patrol_enforcer_pubsub_topic.id}"
 }
 
-module "create_patrol_forseti_subscription"{
+module "create_patrol_fs_subscription"{
   source = "./modules/createpubsubtopicsubscription"
-  name = "${var.forseti_pubsub_topic_subscription}"
-  topic = "${module.create_patrol_forseti_pubsub_topic.id}"
+  name = "${var.fs_pubsub_topic_subscription}"
+  topic = "${module.create_patrol_fs_pubsub_topic.id}"
 }
 
 module "create_private_ip" {
@@ -195,21 +195,22 @@ module "create_patrol_apiserver_user" {
   host = "${var.patrol_apiserver_cloudsql_host}"
 }
 
-module "create_patrol_forseti_user" {
+module "create_patrol_fs_user" {
   source = "./modules/createcloudsqluser"
-  name = "${var.patrol_forseti_user}"
+  name = "${var.patrol_fs_user}"
   instance = "${module.create_patrol_cloudsql_instance.name}"
-  host = "${var.patrol_forseti_cloudsql_host}"
+  host = "${var.patrol_fs_cloudsql_host}"
 }
+
 module "create_patrol_apiserver_database"{
   source = "./modules/createcloudsqldatabase"
   name = "${var.patrol_apiserver_cloudsql_database}"
   instance = "${module.create_patrol_cloudsql_instance.name}"
 }
 
-module "create_patrol_forseti_database"{
+module "create_patrol_fs_database"{
   source = "./modules/createcloudsqldatabase"
-  name = "${var.patrol_forseti_cloudsql_database}"
+  name = "${var.patrol_fs_cloudsql_database}"
   instance = "${module.create_patrol_cloudsql_instance.name}"
 }
 

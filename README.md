@@ -27,13 +27,12 @@ The below packages are needed on the installer machine.
 - wget
 - Terraform v0.12.3
 - Gcloud v253.0.0 
-- git
 - curl
+- git
 - JSON processor (jq)
 
-### 2.2 Script to install Prerequisites
-The pre-requisite packages can be installed  on the installer machine using the script **pre-req-installer.sh**, which is available in the [patrol-k8s-marketplace](https://github.com/Biarca/patrol-k8s-marketplace) repository.
-
+**Note**: The above mentioned packages if not already installed in the installer machine, they will be installed as part of the installation script.
+### 2.2 Clone the Git Repository
 In the installer machine, create a folder (say patrol-installer) and navigate to that folder. If already not installed, install the 'git' package in the installer machine using the below command:
 ````
 $ sudo apt-get install -y git
@@ -41,11 +40,6 @@ $ sudo apt-get install -y git
 Clone the **"patrol-k8s-marketplace"** repository by using the below command:
 ````
 $ git clone https://github.com/Biarca/patrol-k8s-marketplace.git
-````
-Then execute the below commands to install the pre-requisite packages.
-````
-$ cd patrol-k8s-marketplace/
-$ sudo bash pre-req-installer.sh
 ````
 # 3. Steps to Install GCP Assets using Script
 Follow the below instructions for installing GCP assets on installer project using script.
@@ -60,7 +54,7 @@ Create a Service account in the installer project and assign the below mentioned
 In the GCP Console, select Monitoring project and navigate to **IAM & Admin > IAM** and Click on "Add". Under “New members” provide the Installer project service account and select “Security Admin” as role and click on “Save”.
 In the Installer project, navigate to **IAM & Admin > Service Accounts**, for the desired service account, click on the 3-dots under the Actions column and click on "Create Key". Select key type as "JSON" and click on "CREATE".
 
-Download the installer project service account key in JSON format and copy it to the ````<Path-To-patrol-installer>/patrol-k8s-marketplace```` directory in the installer machine. 
+Download the installer project service account key in JSON format and copy it to the ````<Path-To-patrol-installer>/patrol-k8s-marketplace/terraform```` directory in the installer machine. 
 ### 3.2 Creating External Static Address and DNS Record
 For accessing Biarca Patrol UI using an FQDN, perform the below steps in GCP.
 #### 3.2.1 Create External Static IP
@@ -122,11 +116,11 @@ Below is the list of parameters in **installer_envs** file, which needs to be up
 - **PATROL_STATS_TIME**=<#Frequency in minutes for updating Biarca Patrol statictics in Patrol Dashboard. PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15. Example:- 15>
 
 ### 3.4 Creating Patrol Specific GCP Resources
-Navigate to the path `<Path to patrol-installer>/patrol-k8s-marketplace/terraform` a nd execute the below command to install the required GCP resources in the installer project.
+Navigate to the path `<Path to patrol-installer>/patrol-k8s-marketplace/terraform` and execute the below command to install the required GCP resources in the installer project.
 ````
 $ bash installer.sh
 ````
-As part of the script execution, when prompted for a value provide 'yes'.
+As part of the script execution, it will prompt for the user password to run few sudo commands. Also when it prompts for a value provide 'yes'.
 
 **Note:** Post successful completion of the script, few values will be displayed at the end of the script. Those values MUST be provided in the Marketplace UI during the Patrol app installation
 ### 3.5 Patrol Installation from GCP Marketplace

@@ -10,8 +10,8 @@ output "PATROL_ENFORCER_SCANNER_BUCKET" {
   value = "${module.create_patrol_scanner_bucket.name}"
 }
 
-output "PATROL_ENFORCER_FORSETI_API_SERVER" {
-  value = "${var.PATROL_FORSETI_API_SERVER}"
+output "PATROL_ENFORCER_FS_API_SERVER" {
+  value = "${var.PATROL_FS_API_SERVER}"
 }
 
 output "PATROL_ENFORCER_ENFORCER_PROJECT" {
@@ -23,51 +23,51 @@ output "PATROL_ENFORCER_ENFORCER_SUBSCRIPTION_NAME" {
 }
 
 
-output "PATROL_FORSETI_GOOGLE_APPLICATION_CREDENTIALS"{
-    value="/keys/${var.forseti_service_account_id}.json"
+output "PATROL_FS_GOOGLE_APPLICATION_CREDENTIALS"{
+    value="/keys/${var.fs_service_account_id}.json"
 }
 
-output "PATROL_FORSETI_CLOUDSQLPROXY_SERVICE_HOST" {
-  value="${var.PATROL_FORSETI_CLOUDSQLPROXY_SERVICE_HOST}"
+output "PATROL_FS_CLOUDSQLPROXY_SERVICE_HOST" {
+  value="${var.PATROL_FS_CLOUDSQLPROXY_SERVICE_HOST}"
 }
 
-output "PATROL_FORSETI_BUCKET" {
+output "PATROL_FS_BUCKET" {
   value="gs://${module.create_patrol_scanner_bucket.name}"
 }
 
-output "PATROL_FORSETI_GCP_ORGANIZATION" {
-  value="${var.patrol_forseti_gcp_organization}"
+output "PATROL_FS_GCP_ORGANIZATION" {
+  value="${var.patrol_fs_gcp_organization}"
 }
 
-output "PATROL_FORSETI_PROJECT_ID" {
+output "PATROL_FS_PROJECT_ID" {
   value = "${var.patrol_projectid}"
 }
 
-output "PATROL_FORSETI_SUBSCRIPTION_NAME" {
-  value = "${module.create_patrol_forseti_subscription.name}"
+output "PATROL_FS_SUBSCRIPTION_NAME" {
+  value = "${module.create_patrol_fs_subscription.name}"
 }
 
-output "PATROL_FORSETI_SERVER_CONF" {
-  value = "${var.PATROL_FORSETI_SERVER_CONF}"
+output "PATROL_FS_SERVER_CONF" {
+  value = "${var.PATROL_FS_SERVER_CONF}"
 }
-output "PATROL_FORSETI_API_SERVER" {
-  value = "${var.PATROL_FORSETI_API_SERVER}"
-}
-
-output "PATROL_FORSETI_FORSETI_DB_NAME" {
-  value = "${module.create_patrol_forseti_database.name}"
+output "PATROL_FS_API_SERVER" {
+  value = "${var.PATROL_FS_API_SERVER}"
 }
 
-output "PATROL_FORSETI_FORSETI_DB_USERNAME" {
-  value = "${module.create_patrol_forseti_user.name}"
+output "PATROL_FS_FS_DB_NAME" {
+  value = "${module.create_patrol_fs_database.name}"
 }
 
-output "PATROL_FORSETI_FORSETI_DB_PASSWORD" {
-  value = "${module.create_patrol_forseti_user.password}"
+output "PATROL_FS_FS_DB_USERNAME" {
+  value = "${module.create_patrol_fs_user.name}"
+}
+
+output "PATROL_FS_FS_DB_PASSWORD" {
+  value = "${module.create_patrol_fs_user.password}"
 }
 
 output "PATROL_APISERVER_SCANNER_TOPIC_NAME" {
-  value = "${module.create_patrol_forseti_pubsub_topic.name}"
+  value = "${module.create_patrol_fs_pubsub_topic.name}"
 }
 output "PATROL_APISERVER_ENFORCER_TOPIC_NAME" {
   value = "${module.create_patrol_enforcer_pubsub_topic.name}"
@@ -110,15 +110,15 @@ output "PATROL_APISERVER_REGION" {
   value = "${var.patrol_apiserver_region}"
 }
 
-output "PATROL_APISERVER_FORSETI_API_DB_NAME" {
+output "PATROL_APISERVER_FS_API_DB_NAME" {
   value = "${module.create_patrol_apiserver_database.name}"
 }
 
-output "PATROL_APISERVER_FORSETI_API_DB_USERNAME" {
+output "PATROL_APISERVER_FS_API_DB_USERNAME" {
   value = "${module.create_patrol_apiserver_user.name}"
 }
 
-output "PATROL_APISERVER_FORSETI_API_DB_PASSWORD" {
+output "PATROL_APISERVER_FS_API_DB_PASSWORD" {
   value = "${module.create_patrol_apiserver_user.password}"
 }
 
@@ -139,13 +139,8 @@ output "PATROL_APISERVER_EMAIL_RECIPIENT" {
   value = "${var.PATROL_APISERVER_EMAIL_RECIPIENT}"
 }
 
-output "PATROL_APISERVER_GSUITE_SUPER_ADMIN_EMAIL" {
-  value = "${var.patrol_apiserver_gsuite_super_admin_email}"
-}
-
-
-output "PATROL_FORSETI_REST_SERVER" {
-  value = "${var.PATROL_FORSETI_REST_SERVER}"
+output "PATROL_FS_REST_SERVER" {
+  value = "${var.PATROL_FS_REST_SERVER}"
 }
 
 output "PATROL_ENFORCER_SERVER" {
@@ -164,8 +159,8 @@ output "PATROL__VERSION" {
   value = "${var.PATROL_VERSION}"
 }
 
-output "PATROL_FORSETI_REST_VERSION" {
-  value = "${var.PATROL_FORSETI_REST_VERSION}"
+output "PATROL_FS_REST_VERSION" {
+  value = "${var.PATROL_FS_REST_VERSION}"
 }
 
 output "PATROL_API_VERSION" {
@@ -220,8 +215,8 @@ output "LOADBALACER_IP_ADDRESS" {
   value = "${var.static_ipaddress}"
 }
 
-output "STATS_FORSETI_API_SERVER" {
-  value = "${var.STATS_FORSETI_API_SERVER}"
+output "STATS_FS_API_SERVER" {
+  value = "${var.STATS_FS_API_SERVER}"
 }
 
 output "STATS_CLOUDSQLPROXY_SERVICE_HOST" {
@@ -232,15 +227,15 @@ output "STATS_SQL_PORT" {
   value = "${var.PATROL_CLOUDSQL_SQL_PORT}"
 }
 
-output "STATS_FORSETI_API_DB_NAME" {
+output "STATS_FS_API_DB_NAME" {
   value = "${module.create_patrol_apiserver_database.name}"
 }
 
-output "STATS_FORSETI_API_DB_USERNAME" {
+output "STATS_FS_API_DB_USERNAME" {
   value = "${module.create_patrol_apiserver_user.name}"
 }
 
-output "STATS_FORSETI_API_DB_PASSWORD" {
+output "STATS_FS_API_DB_PASSWORD" {
   value = "${module.create_patrol_apiserver_user.password}"
 }
 
@@ -248,7 +243,7 @@ output "PATROL_STATS_TIME"{
   value = "${var.patrol_stats_time}"
 }
 
-output "EVENT_TRIGGER_FORSETI_EVENT_TRIGGER_TOPIC" {
+output "EVENT_TRIGGER_FS_EVENT_TRIGGER_TOPIC" {
   value = "${var.event_trigger_topic_name}"
 }
 
@@ -260,7 +255,7 @@ output "EVENT_TRIGGER_IAP_URL" {
   value = "https://${var.patrol_ip_domain}/api/scan"
 }
 
-output "EVENT_TRIGGER_FORSETI_EVENT_TRIGGER_SA_EMAIL" {
+output "EVENT_TRIGGER_FS_EVENT_TRIGGER_SA_EMAIL" {
   value = "${module.create_event_trigger_serviceaccount.email}"
 }
 
@@ -268,7 +263,7 @@ output "EVENT_TRIGGER_PATROL_PROJECT_ID" {
   value = "${var.patrol_projectid}"
 }
 
-output "EVENT_TRIGGER_FORSETI_OWNER_SA" {
+output "EVENT_TRIGGER_FS_OWNER_SA" {
   value = "${var.patrol_project_owner_serviceaccount_key_file_path}"
 }
 

@@ -15,22 +15,22 @@ variable "patrol_project_owner_serviceaccount_key_file_path" {
 
 # Default region used in provider for the project where biarca patrol will be installed
 variable "patrol_project_default_region" {
-  default="us-central1"
+  default="REGION"
 }
 
 # Id of the project which biarca patrol will be monitoring
-variable "forseti_projectid" {
+variable "fs_projectid" {
   default= "MONITOR_PROJECTID"
 }
 
 # Owner serviceaccount key file path of the project which biarca patrol will be monitoring
-variable "forseti_project_owner_serviceaccount_key_file_path" {
+variable "fs_project_owner_serviceaccount_key_file_path" {
 default = "PATROL_KEYFILE"
 }
 
 # Default region used in provider for the project where biarca patrol will be monitoring
-variable "forseti_project_default_region" {
-  default="us-central1"
+variable "fs_project_default_region" {
+  default="REGION"
 }
 
 # Unique id of the enforcer service account
@@ -43,14 +43,14 @@ variable enforcer_service_account_name {
   default = "patrol-enforcer-RANDOM_ID"
 }
 
-# Unique id of the forseti scanner service account
-variable forseti_service_account_id {
-  default = "patrol-forseti-RANDOM_ID"
+# Unique id of the fs scanner service account
+variable fs_service_account_id {
+  default = "patrol-fs-RANDOM_ID"
 }
 
-# Name of the forseti scanner service account
-variable forseti_service_account_name {
-  default = "patrol-forseti-RANDOM_ID"
+# Name of the fs scanner service account
+variable fs_service_account_name {
+  default = "patrol-fs-RANDOM_ID"
 }
 
 # Unique id of the apiserver service account
@@ -84,7 +84,7 @@ variable eventtrigger_service_account_id {
 }
 
 # Roles given to enforcer service account for the project which biarca patrol will be monitoring
-variable "enforcer_forseti_roles" {
+variable "enforcer_fs_roles" {
     default = ["roles/cloudsql.admin","roles/compute.securityAdmin","roles/iam.securityAdmin","roles/storage.admin"]
 }
 
@@ -94,14 +94,14 @@ variable "enforcer_patrol_roles"{
 
 }
 
-# Roles given to forseti scanner for the project which biarca patrol will be monitoring
-variable "forseti_forseti_roles" {
+# Roles given to fs scanner for the project which biarca patrol will be monitoring
+variable "fs_fs_roles" {
     default = ["roles/appengine.appViewer","roles/bigquery.metadataViewer","roles/browser","roles/cloudasset.viewer","roles/cloudsql.viewer","roles/compute.networkViewer","roles/iam.securityReviewer","roles/orgpolicy.policyViewer","roles/servicemanagement.quotaViewer","roles/serviceusage.serviceUsageConsumer","roles/logging.logWriter","roles/storage.objectViewer"]
 
 }
 
-# Roles given to forseti scanner service account for the project  which biarca patrol will be installed
-variable "forseti_patrol_roles"{
+# Roles given to fs scanner service account for the project  which biarca patrol will be installed
+variable "fs_patrol_roles"{
   default = ["roles/storage.objectAdmin","roles/pubsub.subscriber", "roles/iam.serviceAccountTokenCreator"]
 
 }
@@ -112,7 +112,7 @@ variable "apiserver_patrol_roles"{
 }
 
 # Roles given to apiserver service account for the project  which biarca patrol will be monitoring
-variable "apiserver_forseti_roles"{
+variable "apiserver_fs_roles"{
   default = ["roles/logging.configWriter"]
 }
 
@@ -141,7 +141,7 @@ variable "patrol_compute_instance_machine_type" {
 
 # Instance zone
 variable "patrol_compute_instance_zone" {
-  default = "us-central1-c"
+  default = "ZONE"
 }
 
 # Tags for instance
@@ -189,7 +189,7 @@ variable "patrol_compute_instance_group_ui_namedport_port" {
 
 # Instance group zone which must be same as instance zone
 variable "patrol_compute_instance_group_zone" {
-  default = "us-central1-c"
+  default = "ZONE"
 }
 
 # Scanner bucket name
@@ -208,8 +208,8 @@ variable "enforcer_pubsub_topic" {
 }
 
 # Scanner pubsub topic name
-variable "forseti_pubsub_topic" {
-  default = "patrol-forseti-RANDOM_ID"
+variable "fs_pubsub_topic" {
+  default = "patrol-fs-RANDOM_ID"
 }
 
 
@@ -219,8 +219,8 @@ variable "enforcer_pubsub_topic_subscription" {
 }
 
 # Scanner pubsub subscription name
-variable "forseti_pubsub_topic_subscription" {
-  default = "patrol-forseti-sub-RANDOM_ID"
+variable "fs_pubsub_topic_subscription" {
+  default = "patrol-fs-sub-RANDOM_ID"
 }
 
 # Cloudsql instance name
@@ -236,7 +236,7 @@ variable "cloudsql_private_ip_name" {
 
 # Cloudsql instance region
 variable "cloud_sql_instance_region" {
-  default = "us-central1"
+  default = "REGION"
 }
 
 # Cloudsql instance type
@@ -261,12 +261,12 @@ variable "patrol_apiserver_cloudsql_host" {
 }
 
 # Scanner database username
-variable "patrol_forseti_user" {
-  default = "patrolforseti"
+variable "patrol_fs_user" {
+  default = "patrolfs"
 }
 
 # Scanner cloudsql hostname
-variable "patrol_forseti_cloudsql_host" {
+variable "patrol_fs_cloudsql_host" {
   default = "%"
 }
 
@@ -276,8 +276,8 @@ variable "patrol_apiserver_cloudsql_database" {
 }
 
 # Scanner database name
-variable "patrol_forseti_cloudsql_database" {
-  default = "patrolforseti"
+variable "patrol_fs_cloudsql_database" {
+  default = "patrolfs"
 }
 
 # Health check firewall rule name
@@ -375,7 +375,7 @@ variable "static_ipaddress" {
 
 # Loadbalancer reserved Domain name
 variable "patrol_analytics_url" {
-  default = "http://PATROL_DOMAIN_NAME/grafana/d/iAjK6IJZk690"
+  default = "http://PATROL_DOMAIN_NAME/analytics/d/iAjK6IJZk690"
 }
 
 # Loadbalancer reserved Domain name
@@ -389,23 +389,23 @@ variable "PATROL_ENFORCER_DETAILED_PERMISSIONS_FILE_PATH" {
 }
 
 # Cloudsql host name
-variable "PATROL_FORSETI_CLOUDSQLPROXY_SERVICE_HOST" {
+variable "PATROL_FS_CLOUDSQLPROXY_SERVICE_HOST" {
   default = "cloudsql"
 }
 
 # Organisation name
-variable "patrol_forseti_gcp_organization" {
+variable "patrol_fs_gcp_organization" {
   default = "GCP_ORGANIZATION"
 }
 
 
 # Server config path 
-variable "PATROL_FORSETI_SERVER_CONF" {
-  default = "/forseti-security/forseti_conf_server.yaml"
+variable "PATROL_FS_SERVER_CONF" {
+  default = "/fs-security/forseti_conf_server.yaml"
 }
 
 # Apiserver container name
-variable "PATROL_FORSETI_API_SERVER" {
+variable "PATROL_FS_API_SERVER" {
   default = "patrol-api-server"
 }
 
@@ -421,7 +421,7 @@ variable "PATROL_APISERVER_SINK_NAME" {
 
 # Api server region
 variable "patrol_apiserver_region" {
-  default = "us-central1"
+  default = "REGION"
 }
 
 # Enable or disable cai
@@ -444,14 +444,9 @@ variable "PATROL_APISERVER_EMAIL_RECIPIENT" {
   default = "PATROL_EMAIL_RECIPIENT"
 }
 
-# Gsuite admin email id
-variable "patrol_apiserver_gsuite_super_admin_email" {
-  default = "GSUITE_SUPER_ADMIN_EMAIL"
-}
-
 # Apiserver container name
-variable "PATROL_FORSETI_REST_SERVER" {
-  default = "http://patrol-forseti-restserver"
+variable "PATROL_FS_REST_SERVER" {
+  default = "http://patrol-fs-restserver"
 }
 
 # Enforcer container and port on which its serving the api
@@ -461,7 +456,7 @@ variable "PATROL_ENFORCER_SERVER" {
 
 # Rules path
 variable "PATROL_APISERVER_RULES_PATH" {
-  default = "/forseti-security/rules"
+  default = "/fs-security/rules"
 }
 
 # Domain name 
@@ -475,7 +470,7 @@ variable "PATROL_VERSION" {
 }
 
 # Scanner version
-variable "PATROL_FORSETI_REST_VERSION" {
+variable "PATROL_FS_REST_VERSION" {
   default = "build-1.0.11"
 }
 
@@ -504,8 +499,8 @@ variable "PATROL_EVENT_TRIGGER_VERSION" {
   default = "build-1.0.12"
 }
 
-# Patrol Grafana version
-variable "PATROL_GRAFANA_VERSION" {
+# Patrol Aanlytics version
+variable "PATROL_ANALYTICS_VERSION" {
   default = "build-1.0.15"
 }
 
@@ -526,8 +521,8 @@ variable "kube_env_files_path" {
 
 
 # Scanner envs path
-variable "docker_forseti_env_files_path" {
-  default = "../app-data/forseti.envs"
+variable "docker_fs_env_files_path" {
+  default = "../app-data/fs.envs"
 }
 
 # Enforcer envs path
@@ -555,9 +550,9 @@ variable "docker_eventtrigger_env_files_path" {
   default = "../app-data/eventtrigger.envs"
 }
 
-# Grafana envs path
-variable "docker_grafana_env_files_path" {
-  default = "../app-data/grafana.envs"
+# Patrol Analytics envs path
+variable "docker_patrol_analytics_env_files_path" {
+  default = "../app-data/patrol_analytics.envs"
 }
 
 # Unstall envs path
@@ -566,7 +561,7 @@ variable "uninstall_env_files_path" {
 }
 
 # Apiserver container name
-variable "STATS_FORSETI_API_SERVER" {
+variable "STATS_FS_API_SERVER" {
   default = "http://patrol-api-server:8000"
 }
 
@@ -603,7 +598,7 @@ variable "slack_webhook_url"{
 }
 
 variable "patrol_appengine_location_id" {
-  default = "us-central"
+  default = "SCHEDULER_REGION"
 }
 
 # Path where the creted serviceaccounts key files will be saved

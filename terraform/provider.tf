@@ -5,10 +5,10 @@ provider "google" {
 }
 
 provider "google" {
-  project     = "${var.forseti_projectid}"
-  credentials = "${var.forseti_project_owner_serviceaccount_key_file_path}"
-  region      = "${var.forseti_project_default_region}"
-  alias       = "forseti"
+  project     = "${var.fs_projectid}"
+  credentials = "${var.fs_project_owner_serviceaccount_key_file_path}"
+  region      = "${var.fs_project_default_region}"
+  alias       = "fs"
 }
 
 provider "google-beta"{

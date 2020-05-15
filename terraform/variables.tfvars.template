@@ -2,4 +2,4 @@
 patrol_project_owner_serviceaccount_key_file_path="${PATROL_OWNER_SA}"
 
 # Owner serviceaccount key file path of the project which biarca patrol will be monitoring
-forseti_project_owner_serviceaccount_key_file_path="${MONITOR_OWNER_SA}"
+fs_project_owner_serviceaccount_key_file_path="${MONITOR_OWNER_SA}"
