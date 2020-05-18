@@ -4,7 +4,7 @@
 
 LOG_LEVEL_ALL
 
-B_LOG --file patrol.log --file-prefix-enable --file-suffix-enable
+B_LOG --file ./patrol.log --file-prefix-enable --file-suffix-enable
 
 LOCATION_LIST=( "us-central" "northamerica-northeast1" "us-west2" "us-west3" "us-west4"
                 "us-east1" "us-east4" "southamerica-east1" "europe-west" "europe-west2"
@@ -110,21 +110,21 @@ function terraform_apply(){
     INFO "################################"
     INFO "Creating resources using terraform..."
     sleep 2
-    if ! terraform init; then
+    if ! terraform init | tee -a ./patrol.log; then
         ERROR "Unable to initialize terraform"; exit 1
     fi
 
     INFO "################################"
     INFO "Saving terraform plan output to plan.txt ..."
     sleep 2
-    if ! terraform plan -out=plan.txt; then
+    if ! terraform plan -out=plan.txt | tee -a ./patrol.log; then
         ERROR "Unable to execute terraform plan"; exit 1
     fi
 
     INFO "################################"
     INFO "Applying terraform..."
     sleep 2
-    if ! terraform apply; then
+    if ! terraform apply | tee -a ./patrol.log; then
         ERROR "Unable to execute terraform apply"; exit 1
     fi
     INFO "################################"
@@ -138,12 +138,13 @@ function create_backup(){
                 "'patrol-kube-cluster-${RANDOM_ID}'"
 
     sleep 2
-    if cd ../app-data && bash create_backup.sh; then
+    if bash ../app-data/create_backup.sh; then
         INFO "Backup of terraform files Completed"
     else
         ERROR "Failed to create backup ${PWD}/create_backup.sh"; exit 1
     fi
 }
+
 INFO "============================================================="
 INFO "Infrastructure Creation Started"
 INFO "============================================================="

@@ -103,8 +103,6 @@ Below is the list of parameters in **installer_envs** file, which needs to be up
 - **PATROL_KEYFILE**=<#Full path of the service account key file created in installer project>
 - **PATROL_PROJECTID**=<#GCP project ID of Installer Project>
 - **MONITOR_PROJECTID**=<#GCP project ID of Monitoring Project. If the installer project and monitoring project are the same, then provide the installer project ID here>
-- **REGION**=<#Region name on which the assets(GKE and CloudSQL) will be created>
-- **ZONE**=<#Zone name on which the assets will be created>
 - **NETWORK_NAME**=<#Provide a Network which is created with **Automatic** Subnet creation mode. Can be **default** network also>
 - **PATROL_DOMAIN_NAME**=<#Domain name reserved (in section 3.2.2) to access Biarca Patrol App>
 - **LOADBALACER_IP_NAME**=<#Reserved External Static IP Name (provided in section 3.2.1)>
@@ -113,8 +111,7 @@ Below is the list of parameters in **installer_envs** file, which needs to be up
 - **SENDGRID_APIKEY**=<#Create a Sendgrid key, which is used to send patrol notifications and provide the key here>
 - **PATROL_EMAIL_SENDER**=<#Email ID for sending Patrol notifications>
 - **PATROL_EMAIL_RECIPIENT**=<#Recipient Email ID for Patrol notifications>
-- **SLACK_WEBHOOK_URL**=<#Slack webhook URL to notify violations and any changes to assets in monitoring projects. This is an **optional** parameter. Comment (using '#') this parameter to ignore>
-- **SCHEDULER_REGION**=<#Region on which cloud scheduler will be created for scheduling patrol scans>
+- **SLACK_WEBHOOK_URL**=<#Slack webhook URL to notify violations and any changes to assets in monitoring projects. This is an **optional** parameter. Comment (using '#') this parameter to ignore>'s'
 - **PATROL_STATS_TIME**=<#Frequency in minutes for updating Biarca Patrol statistics in Patrol Dashboard. PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15. Example:- 15>
 
 ### 3.4 Creating Patrol Specific GCP Resources
@@ -200,5 +197,4 @@ As part of the script execution, when prompted for a value provide 'yes'.
 8. Execute section [4.2] to remove the Owner role & Security Admin role attached to the service accounts.
 
 **Note** :- The above script would not delete 'External Static IP' and 'DNS record' which are created in section [3.2] above. These need to be removed manually.
-
 

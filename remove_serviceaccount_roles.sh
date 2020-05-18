@@ -2,7 +2,7 @@
 
 . ./terraform/b-log.sh
 LOG_LEVEL_ALL
-B_LOG --file patrol.log --file-prefix-enable --file-suffix-enable
+B_LOG --file ./terraform/patrol.log --file-prefix-enable --file-suffix-enable
 
 if ! source ./app-data/uninstall.envs; then
     ERROR "Unable to source './app-data/uninstall.envs' file"; exit 1

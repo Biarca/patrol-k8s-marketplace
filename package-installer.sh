@@ -2,7 +2,7 @@
 
 . ../terraform/b-log.sh
 LOG_LEVEL_ALL
-B_LOG --file patrol.log --file-prefix-enable --file-suffix-enable
+B_LOG --file ./terraform/patrol.log --file-prefix-enable --file-suffix-enable
 
 pkg_list=("wget" "jq" "curl" "zip" "unzip" "git" "terraform" "gcloud")
 
@@ -66,7 +66,8 @@ for pkg in "${pkg_list[@]}"; do
             if dpkg --compare-versions "${tf_ver}" eq 0.12.3; then
                 INFO "'${pkg}' package Version is Supported"
             else
-                ERROR "'${pkg}' package Version is not supported. Updating to v0.12.3"; exit 1
+                ERROR "'${pkg}' package Version is not supported. \
+                Uninstall the existing terraform and run the script again"; exit 1
             fi
         fi
     elif [[ "${pkg}" == "gcloud" ]]; then
