@@ -2,7 +2,7 @@
 
 . ../terraform/b-log.sh
 LOG_LEVEL_ALL
-B_LOG --file ./terraform/patrol.log --file-prefix-enable --file-suffix-enable
+B_LOG --file ./patrol.log --file-prefix-enable --file-suffix-enable
 
 pkg_list=("wget" "jq" "curl" "zip" "unzip" "git" "terraform" "gcloud")
 
@@ -78,11 +78,11 @@ for pkg in "${pkg_list[@]}"; do
         else
             DEBUG "'${pkg}' package found. Checking version .."
             gc_ver=$(gcloud -v | grep SDK | awk '{print $4}')
-            if dpkg --compare-versions "${gc_ver}" gt 253.0.0; then
+            if dpkg --compare-versions "${gc_ver}" gt 252.0.0; then
                 INFO "'${pkg}' package version supported"
             else
                 DEBUG "'${pkg}' package version not supported. Updating to v253.0.0"
-                install_cloud
+                install_gcloud
             fi
         fi
     else
