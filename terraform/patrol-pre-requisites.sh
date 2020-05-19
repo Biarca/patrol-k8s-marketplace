@@ -132,7 +132,6 @@ function terraform_apply(){
 
 
 function create_backup(){
-    local VAR1 VAR2
     INFO "################################"
     INFO "Creating required config in kubernetes cluster"\
                 "'patrol-kube-cluster-${RANDOM_ID}'"
@@ -146,6 +145,14 @@ function create_backup(){
     fi
     popd)
 }
+
+function cleanup(){
+    INFO "Cleaning UP.."
+    if ! rm -rf ../app-data/patrol.log; then
+       ERROR "Clean UP Failed."; exit 1
+    fi
+}
+
 
 INFO "============================================================="
 INFO "Infrastructure Creation Started"
@@ -162,6 +169,7 @@ enable_apis
 update_variables
 terraform_apply
 create_backup
+cleanup
 INFO "============================================================="
 INFO "Infrastructure Creation Completed Successfully"
 INFO "============================================================="

@@ -96,6 +96,7 @@ fi
 if ! ( rm -rf $(ls *.envs | grep -v "uninstall.envs") &> /dev/null ); then
     ERROR "Failed to delete the envs files"; exit 1
 fi
+
 INFO "Purged all temp files"
 
 ########################################
