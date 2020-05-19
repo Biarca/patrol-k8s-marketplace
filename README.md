@@ -156,7 +156,7 @@ $ bash remove_serviceaccount_roles.sh
 ## 5. UnInstalling Patrol
 To uninstall the Patrol app from the marketplace, follow the below steps. All the GCP Resources which are created as part of the installation will be removed.
 
-**Note:** Before performing the below, make sure that the installer service account has 'Project Owner' role and monitor service account has 'Security Admin' role.
+**Note:** Before performing the below, make sure that the installer service account has 'Project Owner' role of the installer project and 'Security Admin' role of the monitoring project.
 
 Execute the below Steps:
 1. From **Biarca Patrol UI -> Dashboard**, delete all the project(s).
