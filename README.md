@@ -3,7 +3,7 @@
 
 Patrol is a cloud security and compliance adherence, monitoring and remediation solution built for Google Cloud Platform (GCP) Projects.
 
-Installation of Patrol App in GCP Marketplace requires the following  assets to be created prior to starting in a Project.
+Prior to the installation of Patrol App in GCP Marketplace, the following assets to be created in a Project.
 - Service accounts - 5
 - Firewall Rules - 1
 - Buckets - 2
