@@ -22,7 +22,6 @@ output "PATROL_ENFORCER_ENFORCER_SUBSCRIPTION_NAME" {
   value = "${module.create_patrol_enforcer_subscription.name}"
 }
 
-
 output "PATROL_FS_GOOGLE_APPLICATION_CREDENTIALS"{
     value="/keys/${var.fs_service_account_id}.json"
 }
@@ -138,6 +137,8 @@ output "PATROL_APISERVER_EMAIL_SENDER" {
 output "PATROL_APISERVER_EMAIL_RECIPIENT" {
   value = "${var.PATROL_APISERVER_EMAIL_RECIPIENT}"
 }
+
+
 
 output "PATROL_FS_REST_SERVER" {
   value = "${var.PATROL_FS_REST_SERVER}"
@@ -270,3 +271,8 @@ output "EVENT_TRIGGER_FS_OWNER_SA" {
 output "SLACK_WEBHOOK_URL" {
   value = "${var.slack_webhook_url}"
 }
+
+output "network" {
+  value = "${module.create_vpc_network.network}"
+}
+

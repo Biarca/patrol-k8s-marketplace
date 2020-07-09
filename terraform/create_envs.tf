@@ -32,6 +32,7 @@ resource "null_resource" "create_kube_envs" {
       echo PATROL_ENFORCER_CREDENTIALS=./keys/${var.enforcer_service_account_id}.json >> ${var.kube_env_files_path}
       echo PATROL_EVENTTRIGGER_CREDENTIALS=./keys/${var.eventtrigger_service_account_id}.json >> ${var.kube_env_files_path}
 
+
       echo CLOUDSQL_DB_NAME=${module.create_patrol_apiserver_database.name} >> ${var.kube_env_files_path}
       echo CLOUDSQL_DB_USERNAME=${module.create_patrol_apiserver_user.name} >> ${var.kube_env_files_path}
       echo CLOUDSQL_DB_PASSWORD=${module.create_patrol_apiserver_user.password} >> ${var.kube_env_files_path}
@@ -201,6 +202,7 @@ resource "null_resource" "uninstall_envs" {
     echo REGION=${var.patrol_project_default_region}  >> ${var.uninstall_env_files_path}
     echo PATROL_KUBERNETES_CLUSTER_NAME=${var.patrol_gke_cluster_name} >> ${var.uninstall_env_files_path}
     echo PATROL_ZONE=${var.patrol_compute_instance_zone} >> ${var.uninstall_env_files_path}
+    echo PATROL_NETWORK=${var.patrol_vpc_network_name} >> ${var.uninstall_env_files_path}
     EOT
   }
 }

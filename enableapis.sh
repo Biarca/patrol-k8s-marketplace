@@ -2,7 +2,8 @@
 
 . ../terraform/b-log.sh
 LOG_LEVEL_ALL
-B_LOG --file ./patrol.log --file-prefix-enable --file-suffix-enable
+tmst="${2}"
+B_LOG --file ./patrol-installer-$tmst.log --file-prefix-enable --file-suffix-enable
 
 scheduler_region="${1}"
 installer_key_file=PATROL_KEYFILE

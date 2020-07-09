@@ -3,8 +3,27 @@
 . ./b-log.sh
 
 LOG_LEVEL_ALL
+tmst=$(date '+%Y-%m-%d-%H-%M-%S')
+B_LOG --file ./patrol-uninstall-$tmst.log --file-prefix-enable --file-suffix-enable
 
-B_LOG --file ./patrol-uninstall.log --file-prefix-enable --file-suffix-enable
+deploy_list=("apiserver" "apistats" "enforcer" "eventtrigger" "fs-server" "patrol-analytics" "ui")
+svc_list=("api-server" "enforcer" "fs-restserver" "patrol-analytics")
+cm_list=("apiserver" "apistats" "cloudsql" "enforcer" "eventtrigger" "fs-server" "patrol-analytics")
+sr_list=("apiserver" "cloudsql" "enforcer" "eventtrigger" "fs-server")
+
+function install_terraform() {
+
+    INFO "Downloading terraform binary v0.12.26 . ."
+    if ! wget https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip; then
+        ERROR "Unable to download the terraform."; exit 1
+    fi
+    if ! unzip terraform_0.12.26_linux_amd64.zip; then
+        ERROR "Failed to extract the package"; exit 1
+    fi
+    if ! rm -rf terraform_0.12.26_linux_amd64.zip; then
+        ERROR "Failed to remove the compressed package"; exit 1
+    fi
+}
 
 if ! source ../app-data/uninstall.envs; then
     ERROR "Unable to source 'uninstall.envs' file"; exit 1
@@ -35,8 +54,6 @@ if gcloud container clusters list  --zone="${PATROL_ZONE}" | awk 'NR>=2' | awk '
 
     INFO "Deleting the 'Deployments' of Patrol app .."
 
-    deploy_list=("apiserver" "apistats" "enforcer" "eventtrigger" "fs-server" "patrol-analytics" "ui")
-
     for name in "${deploy_list[@]}"; do
         if ! kubectl delete deploy $name-deployment &> /dev/null; then
             DEBUG "Deployment: '$name' Not Found"
@@ -44,7 +61,6 @@ if gcloud container clusters list  --zone="${PATROL_ZONE}" | awk 'NR>=2' | awk '
     done
 
     INFO "Deleting the 'Services' of Patrol app .."
-    svc_list=("api-server" "enforcer" "fs-restserver" "patrol-analytics")
 
     for svc in "${svc_list[@]}"; do
         if ! kubectl delete svc patrol-$svc &> /dev/null; then
@@ -57,7 +73,7 @@ if gcloud container clusters list  --zone="${PATROL_ZONE}" | awk 'NR>=2' | awk '
     fi
 
     INFO "Deleting the 'Config Maps' of Patrol app .."
-    cm_list=("apiserver" "apistats" "cloudsql" "enforcer" "eventtrigger" "fs-server" "patrol-analytics")
+    
 
     if ! kubectl delete cm patrol-analytics-config &> /dev/null; then
         DEBUG "Patrol Config Map: 'patrol-analytics-config' not found"
@@ -70,7 +86,7 @@ if gcloud container clusters list  --zone="${PATROL_ZONE}" | awk 'NR>=2' | awk '
     done
 
     INFO "Deleting the 'Secrets' of Patrol app .."
-    sr_list=("apiserver" "cloudsql" "enforcer" "eventtrigger" "fs-server")
+    
 
     if ! kubectl delete secret cloudsql-db-credentials &> /dev/null; then
         DEBUG "Patrol Secret: 'cloudsql-db-creds' not found"
@@ -98,14 +114,34 @@ export MONITOR_OWNER_SA=${MONITOR_OWNER_SA}
 
 envsubst '$PATROL_OWNER_SA,$MONITOR_OWNER_SA' < ./variables.tfvars.template > variables.tfvars
 
+INFO "Verifying for terraform in local"
+if ! test -s terraform; then
+    DEBUG "No terraform binary found in local. Downloading .."
+    install_terraform
+fi
+
 INFO "Destroying the resources created using terraform"
 
-if ! terraform init; then
+if ! ./terraform init; then
     ERROR "Failed to initialize the terraform"; exit 1
 fi
 
-if ! terraform destroy -var-file=variables.tfvars; then
+if ! ./terraform destroy -var-file=variables.tfvars; then
   ERROR "Unable to perform terraform destroy"; exit 1
 fi
 
-INFO "Successfully uninstalled the Patrol Setup"
+INFO "Removing the Patrol network .."
+if ! gcloud compute networks subnets delete ${PATROL_NETWORK} --region ${REGION} -q; then
+    ERROR "Unable to delete Patrol vpc subnets"; exit 1
+fi
+
+if ! gcloud compute networks delete ${PATROL_NETWORK} -q; then
+    ERROR "Unable to delete Patrol vpc network"; exit 1
+fi
+
+INFO "Deleted the Patrol Network"
+INFO "==================================================="
+INFO "Patrol Uninstallation is Successful"
+INFO "Delete the DNS Record of Patrol Domain Name."
+INFO "Release the External IP Address from GCP Project"
+INFO "==================================================="

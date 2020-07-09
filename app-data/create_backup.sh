@@ -3,7 +3,8 @@
 . ../terraform/b-log.sh
 
 LOG_LEVEL_ALL
-B_LOG --file ../terraform/patrol.log --file-prefix-enable --file-suffix-enable
+tmst="${1}"
+B_LOG --file ../terraform/patrol-installer-$tmst.log --file-prefix-enable --file-suffix-enable
 
 if ! source kube-deployment.envs; then
     ERROR "Unable to source 'kube-deployment.envs' file"; exit 1

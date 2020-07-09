@@ -85,7 +85,7 @@ variable eventtrigger_service_account_id {
 
 # Roles given to enforcer service account for the project which biarca patrol will be monitoring
 variable "enforcer_fs_roles" {
-    default = ["roles/cloudsql.admin","roles/compute.securityAdmin","roles/iam.securityAdmin","roles/storage.admin"]
+    default = ["roles/bigquery.admin","roles/cloudsql.admin","roles/compute.securityAdmin","roles/compute.admin","roles/iam.securityAdmin","roles/storage.admin"]
 }
 
 # Roles given to enforcer service account for the project which biarca patrol will be installed
@@ -126,6 +126,14 @@ variable "event_trigger_service_account_roles" {
   default = ["roles/pubsub.subscriber"]
 }
 
+variable "patrol_vpc_network_name" {
+  default = "patrol-network-RANDOM_ID"
+}
+
+variable "patrol_vpc_region_name" {
+  default = "REGION"
+}
+
 variable "patrol_gke_cluster_name" {
   default = "patrol-kube-cluster-RANDOM_ID"
 }
@@ -161,9 +169,13 @@ variable "patrol_compute_instance_boot_disk_size" {
 
 # Instance network
 variable "patrol_gke_network" {
-  default = "NETWORK_NAME"
+  default = "patrol-network-RANDOM_ID"
 }
 
+# Instance subnetwork
+variable "patrol_gke_subnetwork" {
+  default = "patrol-network-RANDOM_ID"
+}
 
 # Instance group name
 variable "patrol_compute_instance_group_name" {
@@ -185,7 +197,6 @@ variable "patrol_compute_instance_group_ui_namedport_name" {
 variable "patrol_compute_instance_group_ui_namedport_port" {
   default = "80"
 }
-
 
 # Instance group zone which must be same as instance zone
 variable "patrol_compute_instance_group_zone" {
@@ -246,7 +257,7 @@ variable "cloud_sql_instance_tier" {
 
 # Cloudsql instance network
 variable "cloud_sql_instance_network" {
-  default = "NETWORK_NAME"
+  default = "patrol-network-RANDOM_ID"
 }
 
 
@@ -302,7 +313,7 @@ variable "patrol_allow_health_check_source_ranges" {
 
 # Health check network
 variable "patrol_allow_health_check_network" {
-  default="NETWORK_NAME"
+  default="patrol-network-RANDOM_ID"
 }
 
 
@@ -466,7 +477,7 @@ variable "PATROL_APISERVER_PUBLIC_IP" {
 
 # Ptrol application version
 variable "PATROL_VERSION" {
-  default = "1.0"
+  default = "2.1.0"
 }
 
 # Scanner version
@@ -499,7 +510,7 @@ variable "PATROL_EVENT_TRIGGER_VERSION" {
   default = "build-1.0.12"
 }
 
-# Patrol Aanlytics version
+# Patrol analytics version
 variable "PATROL_ANALYTICS_VERSION" {
   default = "build-1.0.15"
 }
@@ -550,9 +561,9 @@ variable "docker_eventtrigger_env_files_path" {
   default = "../app-data/eventtrigger.envs"
 }
 
-# Patrol Analytics envs path
+# patrol_analytics envs path
 variable "docker_patrol_analytics_env_files_path" {
-  default = "../app-data/patrol_analytics.envs"
+  default = "../app-data/patrol-analytics.envs"
 }
 
 # Unstall envs path

@@ -6,6 +6,10 @@ variable "network" {
   default = "default"
 }
 
+variable "subnetwork" {
+  default = "default"
+}
+
 variable "location" {
   default = "null"
 }

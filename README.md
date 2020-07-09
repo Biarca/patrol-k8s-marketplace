@@ -25,8 +25,8 @@ Follow the instructions below for setting up an installer machine to execute scr
 The below packages are needed on the installer machine.
 - zip
 - wget
-- Terraform v0.12.3
-- Gcloud v253.0.0 
+- Terraform v0.12.26
+- Gcloud v253.0.0 and above
 - curl
 - git
 - JSON processor (jq)
@@ -105,7 +105,6 @@ Below is the list of parameters in the **installer_envs** file which needs to be
 - **MONITOR_PROJECTID**=<#GCP project ID of Monitoring Project. If the Installer Project and Monitoring Project are the same, then provide the Installer Project ID here>
 - **REGION**=<#Region name on which the assets(GKE and CloudSQL) will be created>
 - **ZONE**=<#Zone name on which the assets will be created>
-- **NETWORK_NAME**=<#Provide a Network which is created with **Automatic** Subnet creation mode. Can be **default** network also>
 - **PATROL_DOMAIN_NAME**=<#Domain name reserved (in section 3.2.2) to access Biarca Patrol App>
 - **LOADBALACER_IP_NAME**=<#Reserved External Static IP Name (provided in section 3.2.1)>
 - **LOADBALACER_IP**=<#Reserved External Static IP (provided in section 3.2.1)>
@@ -188,6 +187,7 @@ $ cd <Path to patrol-installer>/patrol-k8s-marketplace/app-data/
     - **REGION**=<#GCP Region in which the GCP resources created> # Ex: 'us-central1'
     - **PATROL_KUBERNETES_CLUSTER_NAME**=<#Name of the Kubernetes cluster which starts with prefix'patrol-kube-cluster'>
     - **PATROL_ZONE**=<#Zone in which the GCP resources created> # Ex: 'us-central1-a'
+    - **PATROL_NETWORK**=<#Patrol Network in which the GCP Assets Created> # Ex: 'patrol-network-<RANDOM_ID>'
 
 **Note:** If the file 'uninstall.envs' already exists, then make sure all the values in the file are valid.
 
@@ -200,3 +200,4 @@ As part of the script execution, when prompted for a value respond with 'yes'.
 8. Execute section [4.2] to remove the Owner role & Security Admin role attached to the service accounts.
 
 **Note** : The above script would not delete 'External Static IP' and 'DNS record' which are created in section [3.2] above. These will need to be removed manually.
+

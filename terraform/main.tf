@@ -26,6 +26,11 @@ module "create_cloudsql_service_account" {
   service_account_project      = "${var.patrol_projectid}"
 }
 
+module "create_vpc_network" {
+  source = "./modules/createvpcnetwork"
+  name = "${var.patrol_vpc_network_name}"
+  region = "${var.patrol_vpc_region_name}"
+}
 
 module "create_enforcer_service_account_key" {
   source             = "./modules/createserviceaccountkey"
@@ -71,13 +76,12 @@ module "save_cloudsql_service_account_key" {
   path    = "${var.patrol_keys_path}/${var.cloudsql_service_account_id}.json"
 }
 
-
 module "grant_enforcer_fs_service_account_roles" {
   source = "./modules/grantroletoserviceaccount"
   roles   = "${var.enforcer_fs_roles}"
   email  = "${module.create_enforcer_service_account.email}"
   providers = {
-    google = "google.fs"
+    google = google.fs
   }
 }
 
@@ -92,7 +96,7 @@ module "grant_fs_fs_service_account_roles" {
   roles   = "${var.fs_fs_roles}"
   email  = "${module.create_fs_service_account.email}"
   providers = {
-    google = "google.fs"
+    google = google.fs
   }
 }
 
@@ -113,7 +117,7 @@ module "grant_apiserver_fs_service_account_roles" {
   roles   = "${var.apiserver_fs_roles}"
   email  = "${module.create_apiserver_service_account.email}"
   providers = {
-    google = "google.fs"
+    google = google.fs
   }
 }
 
@@ -162,7 +166,7 @@ module "create_private_ip" {
     name = "${var.cloudsql_private_ip_name}"
     network_self_link = "https://www.googleapis.com/compute/v1/projects/${var.patrol_projectid}/global/networks/${var.cloud_sql_instance_network}"
     providers = {
-    google = "google-beta"
+    google = google-beta
   }
 }
 
@@ -171,7 +175,7 @@ module "createservicenetworkingconnection" {
   network = "${module.create_private_ip.network_link}"
   reserved_peering_ranges = ["${module.create_private_ip.name}"]
   providers = {
-    google = "google-beta"
+    google = google-beta
   }
 }
 
@@ -183,7 +187,7 @@ module "create_patrol_cloudsql_instance" {
   tier = "${var.cloud_sql_instance_tier}"
   private_network_link = "${module.createservicenetworkingconnection.network_link}"
     providers = {
-    google = "google-beta"
+    google = google-beta
   }
   
 }
@@ -201,7 +205,6 @@ module "create_patrol_fs_user" {
   instance = "${module.create_patrol_cloudsql_instance.name}"
   host = "${var.patrol_fs_cloudsql_host}"
 }
-
 module "create_patrol_apiserver_database"{
   source = "./modules/createcloudsqldatabase"
   name = "${var.patrol_apiserver_cloudsql_database}"
@@ -252,7 +255,8 @@ module "create_event_trigger_subscription"{
 module "create_kubernetes_cluster"{
   source = "./modules/createkubernetescluster"
   name = "${var.patrol_gke_cluster_name}"
-  network = "${var.patrol_gke_network}"
+  network = "${module.create_vpc_network.network}"
+  subnetwork = "${var.patrol_gke_subnetwork}"
   location = "${var.patrol_compute_instance_zone}"
   machine_type = "${var.patrol_compute_instance_machine_type}"
 }
