@@ -37,10 +37,14 @@ if ! gcloud config set project ${PROJECT_ID} &> /dev/null; then
     ERROR "Unable to set gcloud project to '${PATROL_PROJECT_ID}'"; exit 1
 fi
 
+INFO "Getting the Backed up Terraform files"
 if ! gsutil -m cp -r gs://${SCANNER_BUCKET}/tform/* ./ &> /dev/null; then
     DEBUG "Unable to download the terraform files"
     if ! test -s "terraform.tfstate"; then
         ERROR "No tfstate file found in local. Unable to terraform destroy"; exit 1
+    else
+        #sed -i '/deletion_protection/c\            \"deletion_protection\" : false,' terraform.tfstate
+        grep -rl '\"deletion_protection\": true' terraform.tfstate | xargs sed -i 's/\"deletion_protection\": true/\"deletion_protection\": false/g'
     fi
 fi
 
@@ -73,7 +77,7 @@ if gcloud container clusters list  --zone="${PATROL_ZONE}" | awk 'NR>=2' | awk '
     fi
 
     INFO "Deleting the 'Config Maps' of Patrol app .."
-    
+
 
     if ! kubectl delete cm patrol-analytics-config &> /dev/null; then
         DEBUG "Patrol Config Map: 'patrol-analytics-config' not found"
@@ -86,7 +90,7 @@ if gcloud container clusters list  --zone="${PATROL_ZONE}" | awk 'NR>=2' | awk '
     done
 
     INFO "Deleting the 'Secrets' of Patrol app .."
-    
+
 
     if ! kubectl delete secret cloudsql-db-credentials &> /dev/null; then
         DEBUG "Patrol Secret: 'cloudsql-db-creds' not found"
@@ -127,7 +131,14 @@ if ! ./terraform init; then
 fi
 
 if ! ./terraform destroy -var-file=variables.tfvars; then
-  ERROR "Unable to perform terraform destroy"; exit 1
+    ERROR "Unable to perform terraform destroy"; exit 1
+fi
+
+INFO "Removing Patrol router .."
+if ! gcloud compute routers delete ${PATROL_ROUTER} --region ${REGION} --quiet; then
+    ERROR "Unable to delete the Patrol router '${PATROL_ROUTER}'"; exit 1
+else
+    INFO "Removed the Patrol router successfully"
 fi
 
 INFO "Removing the Patrol network .."
@@ -142,6 +153,8 @@ fi
 INFO "Deleted the Patrol Network"
 INFO "==================================================="
 INFO "Patrol Uninstallation is Successful"
+INFO "Remove the Patrol custom roles manually."
 INFO "Delete the DNS Record of Patrol Domain Name."
 INFO "Release the External IP Address from GCP Project"
 INFO "==================================================="
+

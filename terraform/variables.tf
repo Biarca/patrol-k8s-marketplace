@@ -23,6 +23,99 @@ variable "fs_projectid" {
   default= "MONITOR_PROJECTID"
 }
 
+# Custom Role Settings Start
+variable "operations_id" {
+  description = "Operations Role ID"
+  default     = "patrol.operations_role_RANDOM_ID"
+}
+
+variable "operations_role_permissions" {
+  description = "Patrol Operations and Enforcer installer roles permissions list"
+  default = ["storage.objects.list", "pubsub.topics.setIamPolicy",
+    "storage.objects.get", "cloudsql.instances.connect",
+    "pubsub.topics.getIamPolicy", "pubsub.snapshots.seek", "cloudsql.instances.get",
+    "storage.objects.delete", "pubsub.subscriptions.consume",
+    "resourcemanager.projects.get", "resourcemanager.projects.getIamPolicy",
+    "pubsub.topics.attachSubscription", "pubsub.topics.publish",
+    "storage.objects.create", "cloudsql.instances.list"]
+}
+
+variable "scanner_id" {
+  description = "Scanner Role ID"
+  default     = "patrol.scanner_role_RANDOM_ID"
+}
+
+variable "scanner_role_permissions" {
+  description = "Patrol scanner role permissions list"
+  default = ["bigquery.datasets.get", "bigquery.tables.list",
+    "cloudfunctions.functions.getIamPolicy",
+    "cloudfunctions.functions.list", "cloudsql.instances.get", "cloudsql.instances.list",
+    "compute.backendServices.list", "compute.disks.list", "compute.firewalls.list",
+    "compute.forwardingRules.list", "compute.globalOperations.get", "compute.images.list",
+    "compute.instanceGroupManagers.list", "compute.instanceGroups.get",
+    "compute.instanceGroups.list", "compute.instances.get", "compute.instances.list",
+    "compute.instanceTemplates.list", "compute.networks.list",
+    "compute.snapshots.list", "compute.subnetworks.list", "container.clusters.list",
+    "iam.roles.list", "iam.serviceAccountKeys.list", "iam.serviceAccounts.getIamPolicy",
+    "iam.serviceAccounts.list", "resourcemanager.projects.get",
+    "resourcemanager.projects.getIamPolicy", "serviceusage.services.list",
+    "storage.buckets.get", "storage.buckets.getIamPolicy", "storage.buckets.list",
+    "storage.objects.list", "orgpolicy.policy.get", "appengine.applications.get",
+  "appengine.services.list"]
+}
+
+variable "enforcer_installer_id" {
+  description = "Enforcer role ID for Installer resource"
+  default = "patrol.enforcer_installer_RANDOM_ID"
+}
+
+variable "enforcer_role_installer_permissions" {
+  description = "Enforcer Role permissions list for Installer resource"
+  default = ["cloudsql.instances.connect", "cloudsql.instances.get", "pubsub.subscriptions.consume",
+    "pubsub.topics.attachSubscription", "storage.objects.get", "storage.objects.list", ]
+}
+
+variable "enforcer_id" {
+  description = "Enforcer role ID for Monitoring resource"
+  default     = "patrol.enforcer_mon_RANDOM_ID"
+}
+
+variable "enforcer_role_permissions" {
+  description = "Enforcer Role permissions list for Monitoring resource"
+  default = ["bigquery.datasets.get", "bigquery.datasets.update", "bigquery.jobs.listAll", "cloudfunctions.functions.getIamPolicy",
+    "cloudfunctions.functions.list", "cloudfunctions.functions.setIamPolicy", "cloudsql.instances.get", "cloudsql.instances.list",
+    "cloudsql.instances.update", "compute.firewalls.delete", "compute.firewalls.list", "compute.globalOperations.get",
+    "compute.instances.deleteAccessConfig", "compute.instances.get", "compute.instances.list", "compute.instances.stop",
+    "compute.networks.updatePolicy", "compute.zoneOperations.get", "compute.zones.list", "resourcemanager.projects.getIamPolicy",
+    "resourcemanager.projects.setIamPolicy", "storage.buckets.get", "storage.buckets.getIamPolicy", "storage.buckets.list",
+    "storage.buckets.setIamPolicy", "storage.buckets.update"]
+}
+# Custom Role Settings Ends
+
+## Private Cluster Settings
+
+#Control whether nodes have internal IP addresses only.
+# If enabled, all nodes are given only RFC 1918 private addresses and
+# communicate with the master via private networking.
+variable "enable_private_nodes" {
+  default = "true"
+}
+
+# The IP range in CIDR notation to use for the hosted master network.
+# This range will be used for assigning internal IP addresses to the master or set of masters, as well as the ILB VIP.
+# This range must not overlap with any other ranges in use within the cluster's network.
+variable "master_ipv4_cidr_block" {
+  default = "172.16.0.0/28"
+}
+
+# Control whether the master's internal IP address is used as the cluster endpoint.
+#If set to 'true', the master can only be accessed from internal IP addresses.
+variable "disable_public_endpoint" {
+  default = "false"
+}
+
+## Private Cluster Settings Ends
+
 # Owner serviceaccount key file path of the project which biarca patrol will be monitoring
 variable "fs_project_owner_serviceaccount_key_file_path" {
 default = "PATROL_KEYFILE"
@@ -35,96 +128,93 @@ variable "fs_project_default_region" {
 
 # Unique id of the enforcer service account
 variable enforcer_service_account_id {
-  default = "patrol-enforcer-RANDOM_ID"
+   default = "patrol-enforcer-sa-RANDOM_ID"
 }
 
 # Name of the enforcer service account
 variable enforcer_service_account_name {
-  default = "patrol-enforcer-RANDOM_ID"
+   default = "patrol-enforcer-service-account-RANDOM_ID"
 }
 
 # Unique id of the fs scanner service account
-variable fs_service_account_id {
-  default = "patrol-fs-RANDOM_ID"
-}
+# variable fs_service_account_id {
+#   default = "patrol-fs-RANDOM_ID"
+# }
 
 # Name of the fs scanner service account
-variable fs_service_account_name {
-  default = "patrol-fs-RANDOM_ID"
+# variable fs_service_account_name {
+#   default = "patrol-fs-RANDOM_ID"
+# }
+
+# Unique id of the opscan [Operations, Scanner] service account
+variable opscan_service_account_id {
+  default = "patrol-operations-sa-RANDOM_ID"
 }
 
-# Unique id of the apiserver service account
-variable apiserver_service_account_id {
-  default = "patrol-apiserver-RANDOM_ID"
-}
-
-# Name of the apiserver service account
-variable apiserver_service_account_name {
-  default = "patrol-apiserver-RANDOM_ID"
+# Name of the opscan [Operations, Scanner] service account
+variable opscan_service_account_name {
+  default = "patrol-operations-service-account-RANDOM_ID"
 }
 
 # Unique id of the cloudsql service account
-variable cloudsql_service_account_id {
-  default = "patrol-cloudsql-RANDOM_ID"
-}
+# variable cloudsql_service_account_id {
+#   default = "patrol-cloudsql-RANDOM_ID"
+# }
 
 # Name of the cloudsql service account
-variable cloudsql_service_account_name {
-  default = "patrol-cloudsql-RANDOM_ID"
-}
+# variable cloudsql_service_account_name {
+#   default = "patrol-cloudsql-RANDOM_ID"
+# }
 
 # Event trigger service account name
-variable "event_trigger_service_account_name" {
-  default = "patrol-eventtrigger-RANDOM_ID"
-}
+# variable "event_trigger_service_account_name" {
+#   default = "patrol-eventtrigger-RANDOM_ID"
+# }
 
 # Name of the event trigger service ID
-variable eventtrigger_service_account_id {
-  default = "patrol-eventtrigger-RANDOM_ID"
-}
+# variable eventtrigger_service_account_id {
+#   default = "patrol-eventtrigger-RANDOM_ID"
+# }
 
 # Roles given to enforcer service account for the project which biarca patrol will be monitoring
 variable "enforcer_fs_roles" {
-    default = ["roles/bigquery.admin","roles/cloudsql.admin","roles/compute.securityAdmin","roles/compute.admin","roles/iam.securityAdmin","roles/storage.admin"]
+  default = ["projects/MONITOR_PROJECTID/roles/patrol.enforcer_mon_RANDOM_ID"]
 }
 
 # Roles given to enforcer service account for the project which biarca patrol will be installed
-variable "enforcer_patrol_roles"{
-  default = ["roles/storage.objectViewer","roles/pubsub.subscriber", "roles/cloudsql.client"]
-
+variable "enforcer_patrol_roles" {
+  default = ["projects/PATROL_PROJECTID/roles/patrol.enforcer_installer_RANDOM_ID"]
 }
 
 # Roles given to fs scanner for the project which biarca patrol will be monitoring
-variable "fs_fs_roles" {
-    default = ["roles/appengine.appViewer","roles/bigquery.metadataViewer","roles/browser","roles/cloudasset.viewer","roles/cloudsql.viewer","roles/compute.networkViewer","roles/iam.securityReviewer","roles/orgpolicy.policyViewer","roles/servicemanagement.quotaViewer","roles/serviceusage.serviceUsageConsumer","roles/logging.logWriter","roles/storage.objectViewer"]
-
-}
+# variable "fs_fs_roles" {
+#   default = ["projects/MONITOR_PROJECTID/roles/patrol.scanner_role_RANDOM_ID"]
+# }
 
 # Roles given to fs scanner service account for the project  which biarca patrol will be installed
-variable "fs_patrol_roles"{
-  default = ["roles/storage.objectAdmin","roles/pubsub.subscriber", "roles/iam.serviceAccountTokenCreator"]
-
-}
+# variable "fs_patrol_roles" {
+#   default = ["projects/PATROL_PROJECTID/roles/patrol.operations_role_RANDOM_ID"]
+# }
 
 # Roles given to apiserver service account for the project  which biarca patrol will be installed
-variable "apiserver_patrol_roles"{
-  default = ["roles/storage.objectAdmin","roles/cloudscheduler.admin","roles/pubsub.admin", "roles/iam.securityReviewer"]
+variable "opscan_patrol_roles" {
+  default = ["projects/PATROL_PROJECTID/roles/patrol.operations_role_RANDOM_ID"]
 }
 
 # Roles given to apiserver service account for the project  which biarca patrol will be monitoring
-variable "apiserver_fs_roles"{
-  default = ["roles/logging.configWriter"]
+variable "opscan_fs_roles" {
+  default = ["projects/MONITOR_PROJECTID/roles/patrol.scanner_role_RANDOM_ID", "roles/logging.configWriter"]
 }
 
 # Roles given to cloudsql service account for the project which biarca patrol will be monitoring
-variable "cloudsql_patrol_roles" {
-  default = ["roles/cloudsql.client"]
-}
+# variable "cloudsql_patrol_roles" {
+#   default = ["projects/PATROL_PROJECTID/roles/patrol.operations_role_RANDOM_ID"]
+# }
 
 # Event trigger service account roles
-variable "event_trigger_service_account_roles" {
-  default = ["roles/pubsub.subscriber"]
-}
+# variable "event_trigger_service_account_roles" {
+#   default = ["projects/PATROL_PROJECTID/roles/patrol.operations_role_RANDOM_ID"]
+# }
 
 variable "patrol_vpc_network_name" {
   default = "patrol-network-RANDOM_ID"
@@ -132,6 +222,14 @@ variable "patrol_vpc_network_name" {
 
 variable "patrol_vpc_region_name" {
   default = "REGION"
+}
+
+variable "patrol_router_name" {
+  default = "patrol-router-RANDOM_ID"
+}
+
+variable "patrol_nat_name" {
+  default = "patrol-nat-RANDOM_ID"
 }
 
 variable "patrol_gke_cluster_name" {
@@ -142,7 +240,7 @@ variable "patrol_gke_node_pool" {
   default = "default-pool"
 }
 
-# Instance type 
+# Instance type
 variable "patrol_compute_instance_machine_type" {
   default = "n1-standard-2"
 }
@@ -379,7 +477,7 @@ variable "static_ipaddress_name" {
   default = "LOADBALACER_IP_NAME"
 }
 
-# Loadbalancer Static IP address 
+# Loadbalancer Static IP address
 variable "static_ipaddress" {
   default = "LOADBALACER_IP"
 }
@@ -410,7 +508,7 @@ variable "patrol_fs_gcp_organization" {
 }
 
 
-# Server config path 
+# Server config path
 variable "PATROL_FS_SERVER_CONF" {
   default = "/fs-security/forseti_conf_server.yaml"
 }
@@ -470,49 +568,49 @@ variable "PATROL_APISERVER_RULES_PATH" {
   default = "/fs-security/rules"
 }
 
-# Domain name 
+# Domain name
 variable "PATROL_APISERVER_PUBLIC_IP" {
   default = "https://PATROL_DOMAIN_NAME"
 }
 
 # Ptrol application version
 variable "PATROL_VERSION" {
-  default = "2.1.0"
+  default = "1.4"
 }
 
 # Scanner version
 variable "PATROL_FS_REST_VERSION" {
-  default = "build-1.0.11"
+  default = "build-2.4.19"
 }
 
 # Apiserver version
 variable "PATROL_API_VERSION" {
-  default = "build-1.0.44"
+  default = "1.0.20"
 }
 
 # Apiserver stats version
 variable "PATROL_API_STATS_VERSION" {
-  default = "build-1.0.3"
+  default = "build-1.0.4"
 }
 
 # Enforcer version
 variable "PATROL_ENFORCER_VERSION" {
-  default = "build-1.0.7"
+  default = "build-1.0.11"
 }
 
 # Ui version
 variable "PATROL_UI_VERSION" {
-  default = "build-1.0.38"
+  default = "build-1.0.81"
 }
 
 # Event trigger version
 variable "PATROL_EVENT_TRIGGER_VERSION" {
-  default = "build-1.0.12"
+  default = "build-2.5.13"
 }
 
 # Patrol analytics version
 variable "PATROL_ANALYTICS_VERSION" {
-  default = "build-1.0.15"
+  default = "1.0.3"
 }
 
 # Cloudsql port number
@@ -616,3 +714,4 @@ variable "patrol_appengine_location_id" {
 variable "patrol_keys_path" {
   default = "../app-data/keys"
 }
+

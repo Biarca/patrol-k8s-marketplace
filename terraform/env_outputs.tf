@@ -22,20 +22,20 @@ output "PATROL_ENFORCER_ENFORCER_SUBSCRIPTION_NAME" {
   value = "${module.create_patrol_enforcer_subscription.name}"
 }
 
-output "PATROL_FS_GOOGLE_APPLICATION_CREDENTIALS"{
-    value="/keys/${var.fs_service_account_id}.json"
+output "PATROL_FS_GOOGLE_APPLICATION_CREDENTIALS" {
+  value = "/keys/${var.opscan_service_account_id}.json"
 }
 
 output "PATROL_FS_CLOUDSQLPROXY_SERVICE_HOST" {
-  value="${var.PATROL_FS_CLOUDSQLPROXY_SERVICE_HOST}"
+  value = "${var.PATROL_FS_CLOUDSQLPROXY_SERVICE_HOST}"
 }
 
 output "PATROL_FS_BUCKET" {
-  value="gs://${module.create_patrol_scanner_bucket.name}"
+  value = "gs://${module.create_patrol_scanner_bucket.name}"
 }
 
 output "PATROL_FS_GCP_ORGANIZATION" {
-  value="${var.patrol_fs_gcp_organization}"
+  value = "${var.patrol_fs_gcp_organization}"
 }
 
 output "PATROL_FS_PROJECT_ID" {
@@ -73,7 +73,7 @@ output "PATROL_APISERVER_ENFORCER_TOPIC_NAME" {
 }
 
 output "PATROL_APISERVER_GOOGLE_APPLICATION_CREDENTIALS" {
-  value = "/keys/${var.apiserver_service_account_id}.json"
+  value = "/keys/${var.opscan_service_account_id}.json"
 }
 
 output "PATROL_APISERVER_CLOUDSQLPROXY_SERVICE_HOST" {
@@ -205,7 +205,7 @@ output "PATROL_CLOUDSQL_SQL_PORT" {
 }
 
 output "PATROL_CLOUDSQL_GOOGLE_APPLICATION_CREDENTIALS" {
-  value = "/keys/${var.cloudsql_service_account_id}.json"
+  value = "/keys/${var.opscan_service_account_id}.json"
 }
 
 output "LOADBALACER_IP_NAME" {
@@ -257,7 +257,7 @@ output "EVENT_TRIGGER_IAP_URL" {
 }
 
 output "EVENT_TRIGGER_FS_EVENT_TRIGGER_SA_EMAIL" {
-  value = "${module.create_event_trigger_serviceaccount.email}"
+  value = "${module.create_opscan_service_account.email}"
 }
 
 output "EVENT_TRIGGER_PATROL_PROJECT_ID" {

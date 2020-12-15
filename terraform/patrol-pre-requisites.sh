@@ -12,10 +12,10 @@ LOCATION_LIST=( "us-central" "northamerica-northeast1" "us-west2" "us-west3" "us
                 "asia-northeast2" "asia-northeast3" "australia-southeast1" )
 
 INSTALLER_ENVS=( "RANDOM_ID" "PATROL_KEYFILE" "PATROL_PROJECTID" "MONITOR_PROJECTID"
-                 "REGION" "ZONE" "NETWORK_NAME" "PATROL_DOMAIN_NAME" "LOADBALACER_IP_NAME"
+                 "REGION" "ZONE" "PATROL_DOMAIN_NAME" "LOADBALACER_IP_NAME"
                  "LOADBALACER_IP" "GCP_ORGANIZATION" "SENDGRID_APIKEY" "PATROL_EMAIL_SENDER"
-                 "PATROL_EMAIL_RECIPIENT" "SLACK_WEBHOOK_URL"  "SCHEDULER_REGION"
-                 "PATROL_STATS_TIME" )
+                 "PATROL_EMAIL_RECIPIENT" "SLACK_WEBHOOK_URL" "PATROL_STATS_TIME" )
+
 
 
 function check_prerequsites() {
@@ -41,7 +41,6 @@ function check_variables(){
         fi
 
         if [[ ${!variable} == "" ]]; then
-            echo $variable
             ERROR "'${variable}' value is empty in 'installer_envs' file"; exit 1
         fi
 
@@ -63,7 +62,7 @@ function check_variables(){
         if [[ ${variable} == "SCHEDULER_REGION" ]]; then
             if [[ ! " ${LOCATION_LIST[@]} " =~ " ${SCHEDULER_REGION} " ]]; then
                 ERROR "Scheduler Region provided is not valid. "\
-                       "Please Provide the App Engine Region from this URL: https://cloud.google.com/about/locations#americas"; exit 1
+                      "Please Select Region from this URL: https://cloud.google.com/appengine/docs/locations"; exit 1
             fi
         fi
     done
@@ -71,10 +70,8 @@ function check_variables(){
 }
 
 function check_file_content(){
-
-    if ! test -s "${PATROL_KEYFILE}" ;then
-        ERROR "The file path ${PATROL_KEYFILE} given for '${PATROL_KEYFILE}' "\
-               "not exist or it has no content"; exit 1
+    if ! test -s "${PATROL_KEYFILE}";then
+        ERROR "The file path ${PATROL_KEYFILE} does not exist or it has no content"; exit 1
     fi
 }
 
@@ -102,13 +99,17 @@ function update_variables(){
     INFO "################################"
     INFO "Replacing variables in 'variables.tf' ..."
     sleep 2
-    
+
+    # Key File Full Path Updation
     path=$(cat installer_envs | grep PATROL_KEYFILE | cut -d "=" -f 2 | rev | cut -d "/" -f 1 | rev)
-    echo $path
-    
     sed -i "s|PATROL_KEYFILE=.*|PATROL_KEYFILE=$(pwd)\/$path|" ./installer_envs
     sed -i "s|PATROL_KEYFILE|$(pwd)\/$path|" ./variables.tf
+    org_name=$(gcloud organizations list --format json | jq -r '.[].displayName')
+    if [[ ! -z "${org_name}" ]]; then
+            sed -i "s/ORG_NAME/${org_name}/g" ./variables.tf
+    fi
 
+    # Scheduler Region Updation
     scheduler_region=$(cat installer_envs | grep "SCHEDULER_REGION" | cut -d "=" -f 2)
     sed -i "s~SCHEDULER_REGION~${scheduler_region}~g" variables.tf
     variables=$(grep -o '^[^#]*' ./installer_envs | cut -d "=" -f1)
@@ -142,6 +143,36 @@ function install_terraform() {
     fi
 }
 
+function role_admin(){
+    INFO "###############################"
+    ROLE=roles/iam.roleAdmin
+
+    if [ $1 == "add" ]; then
+        IAM="add-iam-policy-binding"
+        TASK="Added"
+    else
+        IAM="remove-iam-policy-binding"
+        TASK="Removed"
+    fi
+
+    MONITOR_ID=$(cat installer_envs | grep MONITOR_PROJECTID | cut -d "=" -f 2 | rev | cut -d "/" -f 1 | rev)
+    PATROL_ID=$(cat installer_envs | grep PATROL_PROJECTID | cut -d "=" -f 2 | rev | cut -d "/" -f 1 | rev)
+
+    if [ "$MONITOR_ID" == "$PATROL_ID" ]; then
+        INFO "Installer and Monitor Project IDs provided are same. No Additional role needed"
+    else
+        INFO "Installer and Monitor Project IDs provided are different."
+        INFO "Assigning RoleAdmin for Monitoring Project"
+        ACC_ID=$(gcloud config list --format=json | jq -r ".core.account")
+
+        if ! gcloud projects $IAM $MONITOR_ID --member=serviceAccount:$ACC_ID --role=$ROLE &> /dev/null; then
+            INFO "Unable to change roleAdmin for Monitoring project"
+        else
+            INFO "Successfully '$TASK' the Role Admin for Monitoring Project"
+        fi
+    fi
+}
+
 function terraform_apply(){
     INFO "################################"
     INFO "Creating resources using terraform..."
@@ -167,14 +198,56 @@ function terraform_apply(){
     INFO "Successfully created the GCP assets required for Patrol app installation"
 }
 
+function replacing_onborad_elements(){
+    # Replacing elements in onboard.sh file
+    INFO "################################"
+    INFO "Replacing onboard script elements..."
+    sleep 2
+
+    RANDOMID=$(cat ../app-data/apiserver.envs | grep "RANDOM_ID" | cut -d "=" -f 2)
+    sed -i "s|RANDOMID|${RANDOMID}|" ../app-data/onboard.sh ../app-data/user_onboard.sh
+
+    INSTALLER_PROJ_ID=$(cat ../app-data/apiserver.envs | grep "PROJECT_ID" | cut -d "=" -f 2)
+    sed -i "s|INSTALLER_PROJ_ID|${INSTALLER_PROJ_ID}|" ../app-data/onboard.sh
+
+    pth=$(cat ./installer_envs | grep PATROL_KEYFILE | cut -d "=" -f 2)
+    INST_SA=$(cat ${pth} | jq -r ".client_email")
+    sed -i "s|INST_SA|${INST_SA}|" ../app-data/onboard.sh
+
+    OPER_SA=$(cat ../app-data/apiserver.envs | grep "APISERVER_SA" | cut -d "=" -f 2)
+    sed -i "s|OPER_SA|${OPER_SA}|" ../app-data/onboard.sh ../app-data/user_onboard.sh
+
+    ENF_SA=$(cat ../app-data/apiserver.envs | grep "ENFORCER_SA" | cut -d "=" -f 2)
+    sed -i "s|ENF_SA|${ENF_SA}|" ../app-data/onboard.sh ../app-data/user_onboard.sh
+
+    SCAN_PERMISSIONS=$(cat ../app-data/apiserver.envs | grep "SCANNER_PERMISSIONS" | cut -d "=" -f 2)
+    sed -i "s|SCAN_PERMISSIONS|${SCAN_PERMISSIONS}|" ../app-data/onboard.sh ../app-data/user_onboard.sh
+
+    ENF_PERMISSIONS=$(cat ../app-data/apiserver.envs | grep "ENFORCER_PERMISSIONS" | cut -d "=" -f 2)
+    sed -i "s|ENF_PERMISSIONS|${ENF_PERMISSIONS}|" ../app-data/onboard.sh ../app-data/user_onboard.sh
+
+    SCAN_ROLE=$(cat ../app-data/apiserver.envs | grep "SCANNER_ROLEID" | cut -d "=" -f 2)
+    sed -i "s|SCAN_ROLE|${SCAN_ROLE}|" ../app-data/onboard.sh ../app-data/user_onboard.sh
+
+    ENF_ROLE=$(cat ../app-data/apiserver.envs | grep "ENFORCER_ROLEID" | cut -d "=" -f 2)
+    sed -i "s|ENF_ROLE|${ENF_ROLE}|" ../app-data/onboard.sh ../app-data/user_onboard.sh
+
+    kfile=$(cat ./installer_envs | grep PATROL_KEYFILE | cut -d "=" -f 2 | rev | cut -d "/" -f 1 | rev)
+    sed -i "s|KFILE|${kfile}|" ../app-data/onboard.sh
+
+    INFO "##################################"
+    INFO "Successfully replaced the elements in onboard script file"
+}
 
 function create_backup(){
+
+    # Backup the required files in the GCS
     INFO "################################"
     INFO "Creating required config in kubernetes cluster"\
                 "'patrol-kube-cluster-${RANDOM_ID}'"
 
     sleep 2
-    (pushd ../app-data/ 
+    (pushd ../app-data/
     if bash create_backup.sh "${tmst}"; then
         INFO "Backup of terraform files Completed"
     else
@@ -184,12 +257,16 @@ function create_backup(){
 }
 
 function cleanup(){
-    INFO "Cleaning UP.."
-    if ! rm -rf ../app-data/patrol*.log; then
-       ERROR "Clean UP Failed."; exit 1
+    # Clean Ups the temperory files
+    INFO "Cleaning up.."
+    if ! rm -rf ../app-data/patrol.log; then
+       ERROR "Cleanup Failed."; exit 1
     fi
     if ! ./terraform state rm module.create_vpc_network; then
         ERROR "Failed to remove the vpc network state"; exit 1
+    fi
+    if ! ./terraform state rm module.create_patrol_custom_role; then
+        ERROR "Failed to remove the custom role module"; exit 1
     fi
     INFO "Clean Up is successful"
 
@@ -200,7 +277,7 @@ INFO "Infrastructure Creation Started"
 INFO "============================================================="
 
 if ! source ./installer_envs; then
-    ERROR 1 "Unable to source './installer_envs' file"
+    ERROR "Unable to source './installer_envs' file"; exit 1
 fi
 
 check_prerequsites
@@ -209,9 +286,13 @@ check_file_content
 enable_apis
 update_variables
 install_terraform
+role_admin "add"
 terraform_apply
+replacing_onborad_elements
 create_backup
+role_admin "del"
 cleanup
 INFO "============================================================="
 INFO "Infrastructure Creation Completed Successfully"
 INFO "============================================================="
+

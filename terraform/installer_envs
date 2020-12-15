@@ -18,9 +18,6 @@ REGION=<REGION> # Example:- us-central1
 # Zone name in which the Installer Project assets will be created.
 ZONE=<ZONE> # Example:- us-central1-c
 
-# Provide a Network which is created with **Automatic** Subnet creation mode. Can be **default** network also
-NETWORK_NAME=<NETWORK_NAME>
-
 # Domain name reserved to access Biarca Patrol App
 PATROL_DOMAIN_NAME=<PATROL_DOMAIN_NAME>
 
@@ -53,9 +50,6 @@ SLACK_WEBHOOK_URL=<SLACK_WEBHOOK_URL> # Ref: https://api.slack.com/incoming-webh
 
 
 ### Application related envs
-
-# Region in which cloud scheduler will be created for scheduling Patrol scans
-SCHEDULER_REGION=<SCHEDULER_REGION>
 
 # Frequency in minutes for updating Biarca Patrol statictics in Patrol Dashboard.
 # PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15.

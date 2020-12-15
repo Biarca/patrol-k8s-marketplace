@@ -1,7 +1,7 @@
 resource "google_pubsub_topic" "create_topic" {
-  name = "${var.name}"
+  name = var.name
 
   labels = {
-    "topic" = "${var.name}"
+    "topic" = var.name
   }
 }

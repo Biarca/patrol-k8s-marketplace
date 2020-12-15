@@ -4,7 +4,6 @@
 - MONITOR_PROJECTID=<#GCP project ID of Monitoring Project. If the Installer Project and Monitoring Project are the same, then provide the Installer Project ID here>
 - REGION=<#Region name on which the assets(GKE and CloudSQL) will be created>
 - ZONE=<#Zone name on which the assets will be created>
-- NETWORK_NAME=<#Provide a Network which is created with Automatic Subnet creation mode. Can be default network also>
 - PATROL_DOMAIN_NAME=<#Domain name reserved (in section 3.2.2) to access Biarca Patrol App>
 - LOADBALACER_IP_NAME=<#Reserved External Static IP Name (provided in section 3.2.1)>
 - LOADBALACER_IP=<#Reserved External Static IP (provided in section 3.2.1)>
@@ -13,5 +12,4 @@
 - PATROL_EMAIL_SENDER=<#Email ID for sending Patrol notifications>
 - PATROL_EMAIL_RECIPIENT=<#Recipient Email ID for Patrol notifications>
 - SLACK_WEBHOOK_URL=<#Slack webhook URL to notify violations and any changes to assets in monitoring projects. This is an optional parameter. Comment (using '#') this parameter to ignore>
-- SCHEDULER_REGION=<#Region on which cloud scheduler will be created for scheduling patrol scans>
 - PATROL_STATS_TIME=<#Frequency in minutes for updating Biarca Patrol statistics in Patrol Dashboard. PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15. Example: 15>

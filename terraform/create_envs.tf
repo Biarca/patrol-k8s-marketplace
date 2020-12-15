@@ -1,4 +1,3 @@
-
 resource "null_resource" "create_kube_envs" {
     triggers = {
       data="${timestamp()}"
@@ -18,7 +17,7 @@ resource "null_resource" "create_kube_envs" {
       echo PATROL_DOMAIN_NAME=${var.patrol_ip_domain} >> ${var.kube_env_files_path}
       echo SCANNER_BUCKET=${module.create_patrol_scanner_bucket.name} >> ${var.kube_env_files_path}
       echo ROOT_RESOURCE_ID=projects/${var.fs_projectid} >> ${var.kube_env_files_path}
-      
+
       echo PATROL_API_SERVER_TAG=${var.PATROL_API_VERSION} >> ${var.kube_env_files_path}
       echo PATROL_ENFORCER_SERVER_TAG=${var.PATROL_ENFORCER_VERSION} >> ${var.kube_env_files_path}
       echo PATROL_WEB_SERVER_TAG=${var.PATROL_UI_VERSION} >> ${var.kube_env_files_path}
@@ -26,19 +25,18 @@ resource "null_resource" "create_kube_envs" {
       echo PATROL_API_STATS_SERVER_TAG=${var.PATROL_API_STATS_VERSION} >> ${var.kube_env_files_path}
       echo PATROL_EVENT_TRIGGER_TAG=${var.PATROL_EVENT_TRIGGER_VERSION} >> ${var.kube_env_files_path}
 
-      echo CLOUDSQL_CREDENTIALS=./keys/${var.cloudsql_service_account_id}.json >> ${var.kube_env_files_path}
-      echo PATROL_API_CREDENTIALS=./keys/${var.apiserver_service_account_id}.json >> ${var.kube_env_files_path}
-      echo PATROL_FS_CREDENTIALS=./keys/${var.fs_service_account_id}.json >> ${var.kube_env_files_path}
+      echo CLOUDSQL_CREDENTIALS=./keys/${var.opscan_service_account_id}.json >> ${var.kube_env_files_path}
+      echo PATROL_API_CREDENTIALS=./keys/${var.opscan_service_account_id}.json >> ${var.kube_env_files_path}
+      echo PATROL_FS_CREDENTIALS=./keys/${var.opscan_service_account_id}.json >> ${var.kube_env_files_path}
       echo PATROL_ENFORCER_CREDENTIALS=./keys/${var.enforcer_service_account_id}.json >> ${var.kube_env_files_path}
-      echo PATROL_EVENTTRIGGER_CREDENTIALS=./keys/${var.eventtrigger_service_account_id}.json >> ${var.kube_env_files_path}
-
+      echo PATROL_EVENTTRIGGER_CREDENTIALS=./keys/${var.opscan_service_account_id}.json >> ${var.kube_env_files_path}
 
       echo CLOUDSQL_DB_NAME=${module.create_patrol_apiserver_database.name} >> ${var.kube_env_files_path}
       echo CLOUDSQL_DB_USERNAME=${module.create_patrol_apiserver_user.name} >> ${var.kube_env_files_path}
       echo CLOUDSQL_DB_PASSWORD=${module.create_patrol_apiserver_user.password} >> ${var.kube_env_files_path}
       echo SQL_PORT="${var.PATROL_CLOUDSQL_SQL_PORT}"  >> ${var.kube_env_files_path}
       echo PATROL_ANALYTICS_VERSION="${var.PATROL_ANALYTICS_VERSION}"  >> ${var.kube_env_files_path}
-      
+
     EOT
   }
 }
@@ -68,7 +66,7 @@ resource "null_resource" "create_fs_envs" {
   provisioner "local-exec" {
     command = <<EOT
       truncate -s 0 ${var.docker_fs_env_files_path}
-      echo GOOGLE_APPLICATION_CREDENTIALS=/keys/${var.fs_service_account_id}.json >> ${var.docker_fs_env_files_path}
+      echo GOOGLE_APPLICATION_CREDENTIALS=/keys/${var.opscan_service_account_id}.json >> ${var.docker_fs_env_files_path}
       echo BUCKET=gs://${module.create_patrol_scanner_bucket.name}  >> ${var.docker_fs_env_files_path}
       echo GCP_ORGANIZATION=${var.patrol_fs_gcp_organization} >> ${var.docker_fs_env_files_path}
       echo PROJECT_ID=${var.patrol_projectid}  >> ${var.docker_fs_env_files_path}
@@ -88,7 +86,7 @@ resource "null_resource" "create_apiserver_envs" {
     truncate -s 0 ${var.docker_apiserver_env_files_path}
     echo SCANNER_TOPIC_NAME=${module.create_patrol_fs_pubsub_topic.name} >> ${var.docker_apiserver_env_files_path}
     echo ENFORCER_TOPIC_NAME=${module.create_patrol_enforcer_pubsub_topic.name} >> ${var.docker_apiserver_env_files_path}
-    echo GOOGLE_APPLICATION_CREDENTIALS=/keys/${var.apiserver_service_account_id}.json >> ${var.docker_apiserver_env_files_path}
+    echo GOOGLE_APPLICATION_CREDENTIALS=/keys/${var.opscan_service_account_id}.json >> ${var.docker_apiserver_env_files_path}
     echo API_BUCKET=${module.create_patrol_scanner_bucket.name} >> ${var.docker_apiserver_env_files_path}
     echo CAI_BUCKET=${module.create_patrol_cai_bucket.name} >> ${var.docker_apiserver_env_files_path}
     echo SINK_NAME=${var.PATROL_APISERVER_SINK_NAME} >> ${var.docker_apiserver_env_files_path}
@@ -106,12 +104,16 @@ resource "null_resource" "create_apiserver_envs" {
     echo PUBLIC_IP=${var.PATROL_APISERVER_PUBLIC_IP} >> ${var.docker_apiserver_env_files_path}
     echo PATROL_VERSION=${var.PATROL_VERSION} >> ${var.docker_apiserver_env_files_path}
     echo SLACK_WEBHOOK_URL="${var.slack_webhook_url}">>${var.docker_apiserver_env_files_path}
-    echo APISERVER_SA=${module.create_apiserver_service_account.email} >> ${var.docker_apiserver_env_files_path}
-    echo FS_SA=${module.create_fs_service_account.email} >> ${var.docker_apiserver_env_files_path}
+    echo APISERVER_SA=${module.create_opscan_service_account.email} >> ${var.docker_apiserver_env_files_path}
+    echo FS_SA=${module.create_opscan_service_account.email} >> ${var.docker_apiserver_env_files_path}
     echo ENFORCER_SA=${module.create_enforcer_service_account.email} >> ${var.docker_apiserver_env_files_path}
     echo ANALYTICS_URL=${var.patrol_analytics_url} >> ${var.docker_apiserver_env_files_path}
     echo SCHEDULER_REGION=${var.patrol_appengine_location_id} >> ${var.docker_apiserver_env_files_path}
-
+    echo RANDOM_ID=${var.random_id} >> ${var.docker_apiserver_env_files_path}
+    echo SCANNER_ROLEID=${var.scanner_id} >> ${var.docker_apiserver_env_files_path}
+    echo SCANNER_PERMISSIONS=\"${join("\",\"", var.scanner_role_permissions)}\"  >> ${var.docker_apiserver_env_files_path}
+    echo ENFORCER_ROLEID=${var.enforcer_id} >> ${var.docker_apiserver_env_files_path}
+    echo ENFORCER_PERMISSIONS=\"${join("\",\"", var.enforcer_role_permissions)}\" >> ${var.docker_apiserver_env_files_path}
     EOT
   }
 }
@@ -127,7 +129,7 @@ resource "null_resource" "create_cloudsql_envs" {
     echo REGION=${var.cloud_sql_instance_region} >> ${var.docker_cloudsql_env_files_path}
     echo INSTANCE_NAME=${module.create_patrol_cloudsql_instance.name} >> ${var.docker_cloudsql_env_files_path}
     echo SQL_PORT=${var.PATROL_CLOUDSQL_SQL_PORT} >> ${var.docker_cloudsql_env_files_path}
-    echo GOOGLE_APPLICATION_CREDENTIALS=/keys/${var.cloudsql_service_account_id}.json >> ${var.docker_cloudsql_env_files_path}
+    echo GOOGLE_APPLICATION_CREDENTIALS=/keys/${var.opscan_service_account_id}.json >> ${var.docker_cloudsql_env_files_path}
     EOT
   }
 }
@@ -156,7 +158,7 @@ resource "null_resource" "create_event_trigger_envs" {
   provisioner "local-exec" {
     command = <<EOT
     truncate -s 0 ${var.docker_eventtrigger_env_files_path}
-    echo GOOGLE_APPLICATION_CREDENTIALS=/keys/${var.eventtrigger_service_account_id}.json >> ${var.docker_eventtrigger_env_files_path}
+    echo GOOGLE_APPLICATION_CREDENTIALS=/keys/${var.opscan_service_account_id}.json >> ${var.docker_eventtrigger_env_files_path}
     echo FS_API_SERVER=${var.PATROL_FS_API_SERVER}  >> ${var.docker_eventtrigger_env_files_path}
     echo FS_EVENT_TRIGGER_TOPIC="${var.event_trigger_topic_name}" >> ${var.docker_eventtrigger_env_files_path}
     echo FS_EVENT_TRIGGER_SUBSCRIPTION="${var.event_trigger_subscription_name}" >> ${var.docker_eventtrigger_env_files_path}
@@ -164,6 +166,8 @@ resource "null_resource" "create_event_trigger_envs" {
     echo PATROL_PROJECT_ID="${var.patrol_projectid}">>${var.docker_eventtrigger_env_files_path}
     echo SLACK_WEBHOOK_URL="${var.slack_webhook_url}">>${var.docker_eventtrigger_env_files_path}
     echo ENFORCER_SA=${module.create_enforcer_service_account.email} >> ${var.docker_eventtrigger_env_files_path}
+    echo OPERATIONS_SA=${module.create_opscan_service_account.email} >> ${var.docker_eventtrigger_env_files_path}
+    echo RANDOM_ID=${var.random_id} >> ${var.docker_eventtrigger_env_files_path}
     EOT
   }
 }
@@ -203,6 +207,7 @@ resource "null_resource" "uninstall_envs" {
     echo PATROL_KUBERNETES_CLUSTER_NAME=${var.patrol_gke_cluster_name} >> ${var.uninstall_env_files_path}
     echo PATROL_ZONE=${var.patrol_compute_instance_zone} >> ${var.uninstall_env_files_path}
     echo PATROL_NETWORK=${var.patrol_vpc_network_name} >> ${var.uninstall_env_files_path}
+    echo PATROL_ROUTER=${var.patrol_router_name} >> ${var.uninstall_env_files_path}
     EOT
   }
 }
@@ -224,3 +229,4 @@ resource "null_resource" "create_patrol_analytics_envs" {
     EOT
   }
 }
+

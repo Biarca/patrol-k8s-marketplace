@@ -36,6 +36,34 @@ else
     INFO "Copying of Patrol rule files to the bucket is successful"
 fi
 
+INFO "Copying the onboard script to GCS Bucket"
+if ! gsutil -m cp -r ./onboard.sh gs://${SCANNER_BUCKET}/backup/ &> /dev/null; then
+    ERROR "Unable to copy onboard script file to GCS bucket '${SCANNER_BUCKET}'"; exit 1
+else
+    INFO "Copying of Patrol onboard script to the bucket is successful"    
+fi
+
+INFO "Copying the user_onboard script to GCS Bucket"
+if ! gsutil -m cp -r ./user_onboard.sh gs://${SCANNER_BUCKET}/backup/ &> /dev/null; then
+    ERROR "Unable to copy user_onboard script file to GCS bucket '${SCANNER_BUCKET}'"; exit 1
+else
+    INFO "Copying of Patrol user_onboard script to the bucket is successful"    
+fi
+
+INFO "Copying the logs file to GCS Bucket"
+if ! gsutil -m cp -r ../terraform/b-log.sh gs://${SCANNER_BUCKET}/backup/ &> /dev/null; then
+    ERROR "Unable to copy the logs script file to GCS bucket '${SCANNER_BUCKET}'"; exit 1
+else
+    INFO "Copying of logs file to the bucket is successful"
+fi
+
+INFO "Copying the installer service account key file to GCS Bucket"
+if ! gsutil -m cp -r ../terraform/*.json gs://${SCANNER_BUCKET}/backup/ &> /dev/null; then
+    ERROR "Unable to copy the service account key file to GCS bucket '${SCANNER_BUCKET}'"; exit 1
+else 
+    INFO "Copying of installer service account key file to the bucket is successful"
+fi
+
 if ! rm -rf ../bucket-data/* &> /dev/null; then
     ERROR "Unable to purge the template copy files"; exit 1
 fi

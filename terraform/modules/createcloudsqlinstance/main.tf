@@ -17,5 +17,3 @@ resource "google_sql_database_instance" "create_cloud_sql_instance" {
     }
   }
 }
-
-

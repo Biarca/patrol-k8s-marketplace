@@ -15,5 +15,17 @@ variable "location" {
 }
 
 variable "machine_type" {
- default = "null"
+  default = "null"
+}
+
+variable "enable_private_nodes" {
+  default = "null"
+}
+
+variable "master_ipv4_cidr_block" {
+  default = "null"
+}
+
+variable "disable_public_endpoint" {
+  default = "null"
 }
