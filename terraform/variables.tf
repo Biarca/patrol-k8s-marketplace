@@ -600,7 +600,7 @@ variable "PATROL_ENFORCER_VERSION" {
 
 # Ui version
 variable "PATROL_UI_VERSION" {
-  default = "build-1.0.81"
+  default = "build-1.0.82"
 }
 
 # Event trigger version
