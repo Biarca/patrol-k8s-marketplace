@@ -42,11 +42,11 @@ if ! gsutil -m cp -r gs://${SCANNER_BUCKET}/tform/* ./ &> /dev/null; then
     DEBUG "Unable to download the terraform files"
     if ! test -s "terraform.tfstate"; then
         ERROR "No tfstate file found in local. Unable to terraform destroy"; exit 1
-    else
         #sed -i '/deletion_protection/c\            \"deletion_protection\" : false,' terraform.tfstate
-        grep -rl '\"deletion_protection\": true' terraform.tfstate | xargs sed -i 's/\"deletion_protection\": true/\"deletion_protection\": false/g'
     fi
 fi
+
+grep -rl '\"deletion_protection\": true' terraform.tfstate | xargs sed -i 's/\"deletion_protection\": true/\"deletion_protection\": false/g'
 
 INFO "Fetching the cluster endpoint and auth data of kubernetes cluster"
 if gcloud container clusters list  --zone="${PATROL_ZONE}" | awk 'NR>=2' | awk '{print $1}' | grep -wq "${PATROL_KUBERNETES_CLUSTER_NAME}" &> /dev/null;then
@@ -141,11 +141,21 @@ else
     INFO "Removed the Patrol router successfully"
 fi
 
+sleep 2
+INFO "Removing network peering .."
+if ! gcloud compute networks peerings delete NAME --network=${PATROL_NETWORK}; then
+    ERROR "Unable to delete the Patrol network peering '${PATROL_ROUTER}'"; exit 1
+else
+    INFO "Removed the network peering  successfully"
+fi
+
+sleep 10
 INFO "Removing the Patrol network .."
-if ! gcloud compute networks subnets delete ${PATROL_NETWORK} --region ${REGION} -q; then
+if ! gcloud compute networks subnets delete ${PATROL_NETWORK} --region ${REGION} --quiet; then
     ERROR "Unable to delete Patrol vpc subnets"; exit 1
 fi
 
+sleep 10
 if ! gcloud compute networks delete ${PATROL_NETWORK} -q; then
     ERROR "Unable to delete Patrol vpc network"; exit 1
 fi
