@@ -11,7 +11,6 @@ Prior to the installation of Patrol App from GCP Marketplace, the following asse
 - Subscription - 3
 - 3-Node Kubernetes Cluster -1 [“n1-standard-2”]
 - MySQL instance - 1 [2 databases]
-- App Engine - 1
 
 ### 1.1 Installer Machine
 An Ubuntu 18.04 machine (VM / Bare Metal / GCE) is needed to create the above mentioned assets using an automated script. This machine will be referred to as an Installer machine.
@@ -113,7 +112,6 @@ Below is the list of parameters in the **installer_envs** file which needs to be
 - **PATROL_EMAIL_SENDER**=<#Email ID for sending Patrol notifications>
 - **PATROL_EMAIL_RECIPIENT**=<#Recipient Email ID for Patrol notifications>
 - **SLACK_WEBHOOK_URL**=<#Slack webhook URL to notify violations and any changes to assets in monitoring projects. This is an **optional** parameter. Comment (using '#') this parameter to ignore>
-- **SCHEDULER_REGION**=<#Region on which cloud scheduler will be created for scheduling patrol scans>
 - **PATROL_STATS_TIME**=<#Frequency in minutes for updating Biarca Patrol statistics in Patrol Dashboard. PLEASE NOTE THAT THE VALUE SHOULD BE ABOVE 15. Example: 15>
 
 ### 3.4 Creating Patrol Specific GCP Resources
